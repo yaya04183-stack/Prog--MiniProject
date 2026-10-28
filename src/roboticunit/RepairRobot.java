@@ -14,7 +14,14 @@ public RepairRobot(
     Set<Capability> capabilities
 )
 {
-    super(batteryLevel,healthStatus,currentLocation,availability,capabilities);
+    super(batteryLevel,
+    healthStatus,
+    currentLocation,
+    availability,
+        EnumSet.of(
+        Capability.EQUIPMENT_REPAIR,
+        Capability.FACILITY_OPERATIONS,
+    ));
 }
 
 

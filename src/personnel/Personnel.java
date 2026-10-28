@@ -1,5 +1,5 @@
 package personnel;
-import agents.Agent;
+import agents.agent
 import emergencies.EmergencyType;
 import java.util.*;
 import missions.Mission;

@@ -1,5 +1,6 @@
 package facilities;
 
+import agents.Agent;
 import java.util.List;
 import java.util.Map;
 import resources.Resources;

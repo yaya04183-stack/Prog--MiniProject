@@ -1,13 +1,15 @@
-package agents; 
+package agents;
 
-import missions.Mission;
 import emergencies.EmergencyType;
+import missions.Mission;
 
 public interface Agent {
 
     boolean canPerform(Mission mission);
 
     boolean isAvailable();
+
+    void makeAvailable();
 
     void setAvailability(boolean availability);
 

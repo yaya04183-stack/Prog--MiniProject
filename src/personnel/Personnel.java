@@ -1,6 +1,7 @@
 package personnel;
-import agents.agent
-import emergencies.EmergencyType;
+
+import agents.Agent;
+import missions.Mission;
 import java.util.*;
 import missions.Mission;
 
@@ -43,7 +44,6 @@ public abstract class Personnel
         else this.fatigueLevel = fatigueLevel;
         this.mission = mission;
         this.availability = availability;
-        
         }
 
 
@@ -88,7 +88,6 @@ public abstract class Personnel
     if(healthStatus==null || healthStatus.isBlank())
         throw new IllegalArgumentException("Health Status Connot be null or empty");
     else this.healthStatus = healthStatus;
-
     }
 
     public void setCurrentLocation(String currentLocation){

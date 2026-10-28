@@ -1,5 +1,6 @@
 package facilities;
 
+import agents.Agent;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -82,13 +83,14 @@ public  abstract class Facilities
 
 
 
-    public void setOccupants(List<Agent>    ) {
+    public void setOccupants(List<Agent> occupants)
+    {    
         if (occupants == null)
             throw new IllegalArgumentException("Invalid Occupants");
         else
             this.occupants = new ArrayList<>(occupants);
 }
-//##########################33
+//##########################
 
 // in Facilities: reading how much of a resource this facility holds
 public double getResourceAmount(Resources r)

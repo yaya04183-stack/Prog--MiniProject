@@ -31,7 +31,7 @@ public class Colony {
         else {this.personnel.add(person);}
     }
 
-    public void addFacility(facilities facility)
+    public void addFacility(Facilities facility)
     {
         if(facility==null || facility.isBlank())
         {

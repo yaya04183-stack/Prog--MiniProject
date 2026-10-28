@@ -2,5 +2,7 @@ package emergencies;
 
 public enum EmergencyStatus
 {
-    PENDING, RESOLVED, UNRESOLVED
+    PENDING, 
+    RESOLVED, 
+    UNRESOLVED
 }

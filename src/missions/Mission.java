@@ -7,10 +7,9 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
-import missions.Mission;
 import resources.Resources;
 import enums.Capability;
-import roboticunit.Agent;
+import agents.Agent;
 import facilities.Facilities;
 
 public abstract class Mission {
@@ -23,22 +22,26 @@ public abstract class Mission {
     private Set<Capability> requiredCapabilities;
 
     public Mission(
-        List<Agent> agents,
-        int neededtimesunits,
-        Facilities facility,
-        Map<Resources, Double> requiredResources,
-        Set<Capability> requiredCapabilities
-    ) {
+            List<Agent> agents,
+            int neededtimesunits,
+            Facilities facility,
+            Map<Resources, Double> requiredResources,
+            Set<Capability> requiredCapabilities) {
 
         if (requiredResources == null) {
-            throw new IllegalArgumentException("Invalid required resources");
+            throw new IllegalArgumentException(
+                    "Invalid required resources");
         }
 
-        for (Map.Entry<Resources, Double> entry : requiredResources.entrySet()) {
+        for (Map.Entry<Resources, Double> entry
+                : requiredResources.entrySet()) {
+
             if (entry.getKey() == null
                     || entry.getValue() == null
                     || entry.getValue() <= 0) {
-                throw new IllegalArgumentException("Invalid required resources");
+
+                throw new IllegalArgumentException(
+                        "Invalid required resources");
             }
         }
 
@@ -46,10 +49,13 @@ public abstract class Mission {
 
         if (requiredCapabilities == null
                 || requiredCapabilities.contains(null)) {
-            throw new IllegalArgumentException("Invalid required capabilities");
+
+            throw new IllegalArgumentException(
+                    "Invalid required capabilities");
         }
 
-        this.requiredCapabilities = new HashSet<>(requiredCapabilities);
+        this.requiredCapabilities =
+                new HashSet<>(requiredCapabilities);
 
         if (agents == null) {
             throw new IllegalArgumentException("Invalid agents");
@@ -122,12 +128,16 @@ public abstract class Mission {
         this.state = state;
     }
 
-    public void setRequiredCapabilities(Set<Capability> capabilities) {
+    public void setRequiredCapabilities(
+            Set<Capability> capabilities) {
+
         if (capabilities == null || capabilities.contains(null)) {
-            throw new IllegalArgumentException("Invalid required capabilities");
+            throw new IllegalArgumentException(
+                    "Invalid required capabilities");
         }
 
-        this.requiredCapabilities = new HashSet<>(capabilities);
+        this.requiredCapabilities =
+                new HashSet<>(capabilities);
     }
 
     // Assign an agent
@@ -138,16 +148,19 @@ public abstract class Mission {
         }
 
         if (this.agents.contains(agent)) {
-            throw new IllegalArgumentException("Agent already assigned");
+            throw new IllegalArgumentException(
+                    "Agent already assigned");
         }
 
-        this.state = Missionstate.ASSIGNED;
         this.agents.add(agent);
+        this.state = Missionstate.ASSIGNED;
     }
 
-    // Check whether available resources satisfy the mission requirements
+    // Check required resources against available resources
 
-    public boolean checkresources(Map<Resources, Double> availableResources) {
+    public boolean checkresources(
+            Map<Resources, Double> availableResources) {
+
         if (availableResources == null) {
             return false;
         }
@@ -155,24 +168,15 @@ public abstract class Mission {
         for (Map.Entry<Resources, Double> entry
                 : this.requiredResources.entrySet()) {
 
-            Double available = availableResources.get(entry.getKey());
+            Double available =
+                    availableResources.get(entry.getKey());
 
-            if (available == null || available < entry.getValue()) {
+            if (available == null
+                    || available < entry.getValue()) {
                 return false;
             }
         }
 
         return true;
-    }
-
-    @Override
-    public boolean canperform(Mission mission) {
-        return  mission != null 
-        && isAvailable()
-        && getAgents() > 0
-        && getCapabilities().containsAll(
-            mission.getRequiredCapabilities()
-        );
-
     }
 }

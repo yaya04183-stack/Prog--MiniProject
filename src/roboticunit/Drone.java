@@ -1,9 +1,6 @@
 package roboticunit;
 import enums.Capability;
-import java.util.Set;
-
-
-import missions.Mission;
+import java.util.EnumSet;
 
 public class Drone extends RoboticUnit{
 
@@ -11,9 +8,9 @@ public Drone(
     double batteryLevel,
     String healthStatus,
     String currentLocation,
-    boolean availability,
-    Set<Capability> capabilities
+    boolean availability
 )
+
 {
     super(batteryLevel,
     healthStatus,
@@ -22,12 +19,9 @@ public Drone(
     EnumSet.of(
         Capability.AERIAL_RECONNAISSANCE,
         Capability.ACCESS_INACCESSIBLE_AREAS
-    ));
+    )
+    );
 }
-
-
-
-
 
 
 }

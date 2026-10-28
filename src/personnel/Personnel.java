@@ -1,9 +1,7 @@
 package personnel;
 
-import agents.Agent;
 import missions.Mission;
 import java.util.*;
-import missions.Mission;
 
 public abstract class Personnel 
 {

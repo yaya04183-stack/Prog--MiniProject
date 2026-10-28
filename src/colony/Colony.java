@@ -25,7 +25,7 @@ public class Colony {
 
     public void addPersonnel(Personnel person)
     {
-        if(person==null || person.isBlank()){
+        if(person==null){
             throw new IllegalArgumentException("The Person caoont be null or empty");
         }
         else {this.personnel.add(person);}
@@ -33,7 +33,7 @@ public class Colony {
 
     public void addFacility(Facilities facility)
     {
-        if(facility==null || facility.isBlank())
+        if(facility==null)
         {
             throw new IllegalArgumentException("The Facility cannot be null or empty");
         }
@@ -44,7 +44,7 @@ public class Colony {
     }
 
     public void addRobot(RoboticUnit robot){
-        if(robot == null || robot.isBlank()) {
+        if(robot == null) {
             throw new IllegalArgumentException("Robot cannot be null or empty");
         }
         else{

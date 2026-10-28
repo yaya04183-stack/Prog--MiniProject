@@ -1,5 +1,5 @@
 package missions;
 
-public class Exploration {
+public class Exploration extends Mission{
 
 }

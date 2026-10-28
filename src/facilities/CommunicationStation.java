@@ -1,17 +1,21 @@
-
 package facilities;
 
-public class CommunicationStation extends Facilities {
+import java.util.List;
+import java.util.Map;
+import resources.Resources;
 
-    public CommunicationStation(
-            String location,
-            double capacity,
-            String operationalStatus,
-            java.util.Map<resources.Resources, Double> resources,
-            StringBuilder equipment,
-            java.util.List<Agent> occupants) {
+public class CommunicationStation extends Facilities
+{
+    public CommunicationStation(String location, double capacity, OperationalStatus status,
+                                Map<Resources, Double> resources, StringBuilder equipment,
+                                List<Agent> occupants)
+    {
+        super(FacilityType.COMMUNICATION_STATION, location, capacity, status, resources, equipment, occupants);
+    }
 
-        super(location, capacity, operationalStatus,
-              resources, equipment, occupants);
+    // Rescue missions and drones will ask this
+    public boolean isCommunicationAvailable()
+    {
+        return getOperationalStatus().isOperational();
     }
 }

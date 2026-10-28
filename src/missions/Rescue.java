@@ -1,6 +1,6 @@
 package missions;
 import resources.Resources;
 
-public class Rescue {
+public class Rescue extends Mission{
 
 }

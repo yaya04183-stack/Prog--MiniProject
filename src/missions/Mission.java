@@ -7,7 +7,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
-import resources.Resources;
+import enums.Missionstate;
+import enums.Resources;
 import enums.Capability;
 import agents.Agent;
 import facilities.Facilities;

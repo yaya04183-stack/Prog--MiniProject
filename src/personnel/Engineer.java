@@ -1,4 +1,5 @@
 package personnel;
+import enums.Skills;
 import java.util.*;
 import missions.Mission;
 import missions.Repair;

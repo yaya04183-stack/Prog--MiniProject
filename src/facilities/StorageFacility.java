@@ -1,9 +1,11 @@
 package facilities;
 
 import agents.Agent;
+import enums.FacilityType;
+import enums.OperationalStatus;
+import enums.Resources;
 import java.util.List;
 import java.util.Map;
-import resources.Resources;
 
 public class StorageFacility extends Facilities
 {

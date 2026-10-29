@@ -1,4 +1,4 @@
-package facilities;
+package enums;
 
 public enum FacilityType
 {

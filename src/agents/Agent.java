@@ -1,6 +1,6 @@
-package agent;
+package agents;
 
-import emergencies.EmergencyType;
+import enums.EmergencyType;
 import missions.Mission;
 
 public interface Agent {

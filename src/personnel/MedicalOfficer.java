@@ -1,8 +1,8 @@
 package personnel;
+import enums.Skills;
 import java.util.*;
 import missions.Mission;
 import missions.Rescue;
-import emergencies.Emergency;
 import emergencies.medicalEmergency;
 
 public class MedicalOfficer extends Personnel

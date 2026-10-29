@@ -1,6 +1,6 @@
 package missions;
 
-import resources.Resources;
+import enums.Resources;
 
 public class Research extends Mission{
 

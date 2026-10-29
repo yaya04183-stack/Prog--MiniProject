@@ -1,6 +1,6 @@
-package personnel;
+package enums;
 
-public enum Skills 
+public enum Skills
 {
     MECHANICAL,
     SCIENTIFIC,

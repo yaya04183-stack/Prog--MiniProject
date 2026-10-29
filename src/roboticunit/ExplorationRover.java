@@ -3,8 +3,6 @@ import enums.Capability;
 import java.util.Set;
 import java.util.EnumSet;
 
-import missions.Mission;
-
 public class ExplorationRover extends RoboticUnit{
 
 public ExplorationRover(

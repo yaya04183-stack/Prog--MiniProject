@@ -1,11 +1,12 @@
 package facilities;
 
 import agents.Agent;
+import enums.FacilityType;
+import enums.OperationalStatus;
+import enums.Resources;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
-
-import resources.Resources;
 
 public  abstract class Facilities
 {

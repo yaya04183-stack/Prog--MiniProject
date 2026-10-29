@@ -3,7 +3,7 @@ package roboticunit;
 import missions.Mission;
 import enums.Capability;
 import agents.Agent;
-import emergencies.EmergencyType;
+import enums.EmergencyType;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -128,7 +128,7 @@ public abstract class RoboticUnit implements Agent {
     }
 
     @Override
-    public boolean canHandleEmergency(emergencies.EmergencyType emergencyType) {
+    public boolean canHandleEmergency(EmergencyType emergencyType) {
         if (emergencyType == null) {
             return false;
         }

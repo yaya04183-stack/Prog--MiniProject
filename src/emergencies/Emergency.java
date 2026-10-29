@@ -1,5 +1,8 @@
 package emergencies;
 
+import enums.EmergencyStatus;
+import enums.EmergencyType;
+
 public abstract class Emergency
 {
     private final EmergencyType type;

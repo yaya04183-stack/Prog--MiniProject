@@ -1,5 +1,5 @@
 package missions;
-import resources.Resources;
+import enums.Resources;
 
 public class Repair extends Mission{
 

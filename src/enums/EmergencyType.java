@@ -1,4 +1,4 @@
-package emergencies;
+package enums;
 
 public enum EmergencyType
 {

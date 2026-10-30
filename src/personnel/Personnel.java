@@ -1,10 +1,15 @@
 package personnel;
 
+import enums.EmergencyType;
 import enums.Skills;
 import missions.Mission;
-import java.util.*;
+import agents.Agent;
+import java.util.Set;
+import java.util.HashSet;
 
-public abstract class Personnel 
+
+
+public abstract class Personnel implements Agent 
 {
     private String name;
     private int id;
@@ -31,7 +36,7 @@ public abstract class Personnel
         else this.healthStatus = healthStatus;
         // currentLocations
         if(currentLocation==null || currentLocation.isBlank())
-            throw new IllegalArgumentException("Current Locations Connot be null or emppty");
+            throw new IllegalArgumentException("Current Locations Connot be null or empty");
         else this.currentLocation = currentLocation;
         // skills
         if(skills==null || skills.isEmpty())
@@ -43,6 +48,8 @@ public abstract class Personnel
         else this.fatigueLevel = fatigueLevel;
         this.mission = mission;
         this.availability = availability;
+        if(mission != null && availability)
+            throw new IllegalArgumentException("Person Cannot be available while assigned to a mission");
         }
 
 
@@ -63,7 +70,7 @@ public abstract class Personnel
         return fatigueLevel;
     }
     
-    public boolean isAvailability(){
+    public boolean getAvailability(){
         return availability;
     }
 
@@ -78,9 +85,10 @@ public abstract class Personnel
 
     public void setMission(Mission mission)
     {
-        if(mission==null)
-            throw new IllegalArgumentException("Mission Cannot be Null");
-        else this.mission = mission;
+        if(!canPerform(mission))
+            throw new IllegalArgumentException("Person Cannot  Perform That Mission");
+        this.mission = mission;
+        this.availability = false;
     }
 
     public void setHealthStatus(String healthStatus){
@@ -101,7 +109,10 @@ public abstract class Personnel
         else this.fatigueLevel = fatigueLevel;
     }
 
-    public void setAvailability(boolean availability) {
+    public void setAvailability(boolean availability) 
+    {   
+        if(mission != null && availability)
+            throw new IllegalArgumentException("Person is still assigned to a mission");
         this.availability = availability;
     }
 
@@ -110,5 +121,49 @@ public abstract class Personnel
         if(skills==null || skills.isEmpty())
             throw new IllegalArgumentException("Skills Cannot be Null or IsEmpty");
         else this.skills = new HashSet<>(skills);
+    }
+
+
+    // Agent methods
+
+    @Override
+    public void makeAvailable() 
+    {   
+        this.mission = null;
+        setAvailability(true);
+    }
+
+    @Override
+    public boolean isAvailable() {
+        return getAvailability();
+    }
+
+    @Override
+    public boolean canPerform(Mission mission) {
+        if(mission != null && getAvailability())
+            return true;
+        else return false;
+    }
+
+    @Override
+    public boolean canHandleEmergency(EmergencyType emergencyType) {
+        if(!getAvailability())
+            return false;
+        if (emergencyType == null) 
+        {
+            return false;
+        }
+        switch (emergencyType) {
+            case OXYGEN_LEAK:
+                return skills.contains(Skills.MECHANICAL);
+            case FIRE:
+                return skills.contains(Skills.FIRE_RESPONSE);
+            case ROVER_BREAKDOWN:
+                return skills.contains(Skills.MECHANICAL);
+            case MEDICAL:
+                return skills.contains(Skills.MEDICAL);            
+            default:
+                return false;
+        }
     }
 }

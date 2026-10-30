@@ -12,7 +12,7 @@ public class PowerStation extends Facilities
     private final double outputPerTimeUnit;
 
     public PowerStation(String location, double capacity, OperationalStatus status,
-                        Map<Resources, Double> resources, StringBuilder equipment,
+                        Map<Resources, Double> resources, List<Equipment> equipment,
                         List<Agent> occupants, double outputPerTimeUnit)
     {
         super(FacilityType.POWER_STATION, location, capacity, status, resources, equipment, occupants);

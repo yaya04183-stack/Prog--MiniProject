@@ -16,11 +16,11 @@ public  abstract class Facilities
     //private String operationalStatus;
     private OperationalStatus operationalStatus;
     private Map<Resources,Double> resources;
-    private StringBuilder equipment;
+    private List<Equipment> equipment;
     private List<Agent> occupants;
 
 
-    public Facilities(FacilityType type,String location,double capacity,OperationalStatus  operationalStatus,Map<Resources,Double> resources,StringBuilder equipment,  List<Agent> occupants)
+    public Facilities(FacilityType type,String location,double capacity,OperationalStatus  operationalStatus,Map<Resources,Double> resources,List<Equipment> equipment,  List<Agent> occupants)
     {   
         if (type == null)
             throw new IllegalArgumentException("Invalid Facility Type");
@@ -42,9 +42,9 @@ public  abstract class Facilities
             throw new IllegalArgumentException("Invalid resources");
         else this.resources = resources;
         // equipment
-        if(equipment==null || equipment.isEmpty())
+        if(equipment==null)
             throw new IllegalArgumentException("Invalid Equipment");
-        else this.equipment = equipment;
+        this.equipment = new ArrayList<>(equipment);
         if (occupants == null)
             {throw new IllegalArgumentException("Invalid Occupants");}
         else this.occupants = new ArrayList<>(occupants);
@@ -55,7 +55,7 @@ public  abstract class Facilities
     public double getCapacity(){return this.capacity;}
     public OperationalStatus getOperationalStatus(){return this.operationalStatus;}
     public Map<Resources,Double> getResources(){return this.resources;}
-    public StringBuilder getEquipment(){return this.equipment;}
+    public List<Equipment> getEquipment(){return new ArrayList<>(this.equipment);}
     public List<Agent> getOccupants() {return new ArrayList<>(this.occupants);}
 
 
@@ -67,11 +67,11 @@ public  abstract class Facilities
     }
 
 
-    public void setEquipment(StringBuilder equipment)
+    public void setEquipment(List<Equipment> equipment)
     {
-        if(equipment==null || equipment.isEmpty())
+        if(equipment==null)
             throw new IllegalArgumentException("Invalid Equipment");
-        else this.equipment = equipment;
+        this.equipment = new ArrayList<>(equipment);
     }
 
 
@@ -91,7 +91,7 @@ public  abstract class Facilities
         else
             this.occupants = new ArrayList<>(occupants);
 }
-//##########################
+
 
 // in Facilities: reading how much of a resource this facility holds
 public double getResourceAmount(Resources r)

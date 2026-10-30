@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 
-import enums.Missionstate;
+import enums.Mission_Emergency_States;
 import enums.Resources;
 import enums.Capability;
 import agents.Agent;
@@ -18,12 +18,12 @@ public abstract class Mission {
     private List<Agent> agents;
     private int neededtimesunits;
     private Facilities facility;
-    private Missionstate state;
-    private Map<Resources, Double> requiredResources;
+    private Mission_Emergency_States state;
+    private Map<Resources,Double> requiredResources;
     private Set<Capability> requiredCapabilities;
+    private String failureReason;
 
     public Mission(
-            List<Agent> agents,
             int neededtimesunits,
             Facilities facility,
             Map<Resources, Double> requiredResources,
@@ -58,11 +58,7 @@ public abstract class Mission {
         this.requiredCapabilities =
                 new HashSet<>(requiredCapabilities);
 
-        if (agents == null) {
-            throw new IllegalArgumentException("Invalid agents");
-        }
-
-        this.agents = new ArrayList<>(agents);
+        this.agents = new ArrayList<>();
 
         if (neededtimesunits <= 0) {
             throw new IllegalArgumentException("Invalid time units");
@@ -83,7 +79,7 @@ public abstract class Mission {
         return this.neededtimesunits;
     }
 
-    public Missionstate getState() {
+    public Mission_Emergency_States getState() {
         return this.state;
     }
 
@@ -99,19 +95,16 @@ public abstract class Mission {
         return new HashSet<>(this.requiredCapabilities);
     }
 
+    public String getFailureReason(){
+        return this.failureReason;
+    }
+
     // Setters
 
     public void setFacility(Facilities facility) {
         this.facility = facility;
     }
 
-    public void setAgents(List<Agent> agents) {
-        if (agents == null) {
-            throw new IllegalArgumentException("Invalid agents");
-        }
-
-        this.agents = new ArrayList<>(agents);
-    }
 
     public void setNeededTimeUnits(int neededtimesunits) {
         if (neededtimesunits <= 0) {
@@ -121,7 +114,7 @@ public abstract class Mission {
         this.neededtimesunits = neededtimesunits;
     }
 
-    public void setState(Missionstate state) {
+    public void setState(Mission_Emergency_States state) {
         if (state == null) {
             throw new IllegalArgumentException("Invalid state");
         }
@@ -141,6 +134,35 @@ public abstract class Mission {
                 new HashSet<>(capabilities);
     }
 
+    public void setFailureReason(String failureReason){
+        if(failureReason == null || failureReason.isBlank()){
+            throw new IllegalArgumentException("Invalid failure reason");
+        }
+        this.failureReason = failureReason;
+    }
+
+    public void failMission(String reason){
+        if(reason == null || reason.isBlank()){
+            throw new IllegalArgumentException("Invalid failure reason");
+        }
+        this.state = Mission_Emergency_States.FAILED;
+        this.failureReason = reason;
+
+        for (Agent agent : this.agents){
+            agent.makeAvailable();
+        }
+    }
+    public void rejectMission(String reason) {
+    if (reason == null || reason.isBlank()) {
+        throw new IllegalArgumentException("Invalid rejection reason");
+    }
+
+    this.state = Mission_Emergency_States.FAILED;
+    this.failureReason = reason;
+}
+
+
+
     // Assign an agent
 
     public void assign(Agent agent) {
@@ -148,13 +170,21 @@ public abstract class Mission {
             throw new IllegalArgumentException("Invalid agent");
         }
 
-        if (this.agents.contains(agent)) {
-            throw new IllegalArgumentException(
-                    "Agent already assigned");
+        if(this.agents.contains(agent)){
+            throw new IllegalArgumentException("Agent already assigned");
+        }
+
+        if(!agent.isAvailable()){
+            throw new IllegalArgumentException("Agent is not available");
+        }
+
+        if(!agent.canPerform(this)){
+            throw new IllegalArgumentException("Agent cannot perform this mission");
         }
 
         this.agents.add(agent);
-        this.state = Missionstate.ASSIGNED;
+        agent.setAvailability(false);
+        this.state = Mission_Emergency_States.ASSIGNED;
     }
 
     // Check required resources against available resources
@@ -177,7 +207,37 @@ public abstract class Mission {
                 return false;
             }
         }
-
         return true;
     }
+
+
+    // After the end of the mission we must free the Agent
+
+    public void finishMission(boolean successful){
+        if(this.state != Mission_Emergency_States.INPROGRESS){
+            throw new IllegalStateException("Mission is not in progress");
+        }
+        if(successful){
+            this.state = Mission_Emergency_States.COMPLETED;
+        }
+        else{
+            this.state = Mission_Emergency_States.FAILED;
+        }
+        for(Agent agent : this.agents){
+            agent.makeAvailable();
+        }
+    }
+
+
+    // Change the status of the mission
+    public void startMission() {
+
+    if (this.state != Mission_Emergency_States.ASSIGNED) {
+        throw new IllegalStateException(
+                "Mission is not assigned");
+    }
+
+    this.state = Mission_Emergency_States.INPROGRESS;
+}
+
 }

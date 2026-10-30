@@ -10,7 +10,7 @@ import java.util.Map;
 public class StorageFacility extends Facilities
 {
     public StorageFacility(String location, double capacity, OperationalStatus status,
-                           Map<Resources, Double> resources, StringBuilder equipment,
+                           Map<Resources, Double> resources, List<Equipment> equipment,
                            List<Agent> occupants)
     {
         super(FacilityType.STORAGE, location, capacity, status, resources, equipment, occupants);

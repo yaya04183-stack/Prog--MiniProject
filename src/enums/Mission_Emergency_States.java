@@ -1,6 +1,6 @@
 package enums;
 
-public enum Missionstate
+public enum Mission_Emergency_States
 {
     ASSIGNED,
     COMPLETED,

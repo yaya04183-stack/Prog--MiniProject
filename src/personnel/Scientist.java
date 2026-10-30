@@ -1,8 +1,7 @@
 package personnel;
 
 import enums.Skills;
-import java.util.Set;
-
+import java.util.*;
 import missions.Exploration;
 import missions.Mission;
 import missions.Rescue;
@@ -16,31 +15,22 @@ public class Scientist extends Personnel
         if(mission!=null)
             if(!canPerform(mission))
             {
-                throw new IllegalArgumentException("Scintist Cannot Make That Mission");
+                throw new IllegalArgumentException("Scientist Cannot Make That Mission");
             }
             else super.setMission(mission);
         
     }
+    
     @Override 
-    public void setMission(Mission mission)
-    {
-        if(canPerform(mission))
-            super.setMission(mission);
-        else throw new IllegalArgumentException("Scintist Cannot Make That Mission");
-    }
-    public void makeAvailable()
-    {
-        setAvailability(true);
-    }
     public boolean canPerform(Mission mission)
-    {
-        if((mission!=null)
-        && ((mission instanceof Research && super.getSkills().contains(Skills.SCIENTIFIC)) 
-        ||  (mission instanceof Exploration && super.getSkills().contains(Skills.SCIENTIFIC))
-        ||   (mission instanceof Rescue && super.getSkills().contains(Skills.COMMUNICATION)))
-        && super.isAvailability())
-        return true;
-        else return false;
+    {   
+        if(!super.canPerform(mission))
+            return false;
+        return
+        ((mission instanceof Research && super.getSkills().contains(Skills.SCIENTIFIC)) 
+        ||(mission instanceof Exploration && super.getSkills().contains(Skills.SCIENTIFIC))
+        ||(mission instanceof Rescue && super.getSkills().contains(Skills.COMMUNICATION)));
+        
     }
 
 }

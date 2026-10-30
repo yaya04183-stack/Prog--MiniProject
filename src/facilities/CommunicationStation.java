@@ -10,7 +10,7 @@ import java.util.Map;
 public class CommunicationStation extends Facilities
 {
     public CommunicationStation(String location, double capacity, OperationalStatus status,
-                                Map<Resources, Double> resources, StringBuilder equipment,
+                                Map<Resources, Double> resources, List<Equipment> equipment,
                                 List<Agent> occupants)
     {
         super(FacilityType.COMMUNICATION_STATION, location, capacity, status, resources, equipment, occupants);

@@ -1,6 +1,7 @@
 package personnel;
-import enums.Skills;
+
 import java.util.*;
+import enums.Skills;
 import missions.Mission;
 import missions.Repair;
 import missions.Rescue;
@@ -17,30 +18,17 @@ public class Engineer extends Personnel
             }
             else super.setMission(mission);
     }
+    
+    
     @Override 
-    public void setMission(Mission mission)
-    {   if(canPerform(mission))
-            super.setMission(mission);
-        else throw new IllegalArgumentException("Engineer Cannot Make That Mission");
-    }
-    public void makeAvailable()
-    {
-        super.setAvailability(true);
-    }
-
     public boolean canPerform(Mission mission)
-    {
-        if((mission != null)
-            && (((mission instanceof Repair && super.getSkills().contains(Skills.MECHANICAL)))
-            || (mission instanceof Rescue  && super.getSkills().contains(Skills.COMMUNICATION)))
-            && super.isAvailability()
-        )
-        return true;
-        else return false;
+    {   
+        if(!super.canPerform(mission))
+            return false;
+        
+        return (((mission instanceof Repair 
+                && super.getSkills().contains(Skills.MECHANICAL)))
+                || (mission instanceof Rescue 
+                && super.getSkills().contains(Skills.COMMUNICATION)));
     }
-    
-    
-
-    
-
 }

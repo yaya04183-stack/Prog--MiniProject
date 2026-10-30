@@ -17,15 +17,9 @@ public ExplorationRover(
     healthStatus,
     currentLocation,
     availability,
-    EnumSet.of(
-        Capability.SURFACE_TRAVEL,
-        Capability.EQUIPMENT_CARRYING,
-        Capability.EXPLORATION
-    )
+    capabilities
     );
 }
-
-
 
 
 

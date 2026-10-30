@@ -3,11 +3,11 @@ package emergencies;
 import enums.EmergencyType;
 import personnel.Personnel;
 
-public class medicalEmergency extends Emergency
+public class MedicalEmergency extends Emergency
 {
     private Personnel patient;
 
-    public medicalEmergency(Personnel patient)
+    public MedicalEmergency(Personnel patient)
     {
         super(EmergencyType.MEDICAL);
         if (patient == null)

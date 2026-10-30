@@ -3,7 +3,8 @@ import enums.Skills;
 import java.util.*;
 import missions.Mission;
 import missions.Rescue;
-import emergencies.medicalEmergency;
+import emergencies.MedicalEmergency;
+import enums.EmergencyType;
 
 public class MedicalOfficer extends Personnel
 {
@@ -19,31 +20,17 @@ public class MedicalOfficer extends Personnel
         
     }
     @Override 
-    public void setMission(Mission mission)
-    {
-        if(canPerform(mission))
-            super.setMission(mission);
-        else throw new IllegalArgumentException("Medical Officier Cannot Make that Mission");
-
-    }
-    public void makeAvailable()
-    {
-        super.setAvailability(true);
-    }
     public boolean canPerform(Mission  mission)
-    {
-        if((mission!=null)
-            &&((mission instanceof Rescue && super.getSkills().contains(Skills.COMMUNICATION)))
-            &&super.isAvailability())
-            return true;
-        else return false;
+    {   
+        if(!super.canPerform(mission))
+            return false;
+        
+            return ((mission instanceof Rescue && super.getSkills().contains(Skills.COMMUNICATION)));
+    
     }
-    public boolean canPerform(medicalEmergency emergency)
-    {
-        if((emergency!=null)
-        &&(super.isAvailability())
-        &&(super.getSkills().contains(Skills.MEDICAL)))
-            return true;
-        else return false;
-    }
+    public boolean canPerform(MedicalEmergency emergency)
+    {   
+        return emergency != null
+        && super.canHandleEmergency(EmergencyType.MEDICAL);
+        }
 }

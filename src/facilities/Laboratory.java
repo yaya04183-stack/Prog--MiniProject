@@ -12,7 +12,7 @@ public class Laboratory extends Facilities
     private boolean onFire = false;
 
     public Laboratory(String location, double capacity, OperationalStatus status,
-                      Map<Resources, Double> resources, StringBuilder equipment,
+                      Map<Resources, Double> resources, List<Equipment> equipment,
                       List<Agent> occupants)
     {
         super(FacilityType.LABORATORY, location, capacity, status, resources, equipment, occupants);

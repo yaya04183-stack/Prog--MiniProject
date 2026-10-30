@@ -5,5 +5,6 @@ public enum Skills
     MECHANICAL,
     SCIENTIFIC,
     MEDICAL,
-    COMMUNICATION
+    COMMUNICATION,
+    FIRE_RESPONSE
 }

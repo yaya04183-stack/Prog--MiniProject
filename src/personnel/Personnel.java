@@ -5,7 +5,9 @@ import enums.Skills;
 import missions.Mission;
 import agents.Agent;
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 
 
@@ -19,6 +21,7 @@ public abstract class Personnel implements Agent
     private double fatigueLevel;
     private boolean availability;
     private Mission mission;
+    
 
     public Personnel(String name,int id,String healthStatus,String currentLocation,Set<Skills> skills,double fatigueLevel,boolean availability,Mission mission)
     {   
@@ -40,10 +43,14 @@ public abstract class Personnel implements Agent
         else this.currentLocation = currentLocation;
         // skills
         if(skills==null || skills.isEmpty())
-            throw new IllegalArgumentException("skills Cannot be null or Empty");    
-        else this.skills = new HashSet<>(skills);
+            throw new IllegalArgumentException("skills Cannot be null or Empty");
+        for (Skills skill : skills) {
+            if (skill == null)
+                throw new IllegalArgumentException("Skills Cannot Contain Null");
+        }
+        this.skills = new HashSet<>(skills);
         //fatigueLevel
-        if(fatigueLevel<0 || fatigueLevel>100)
+        if(fatigueLevel<0 || fatigueLevel>100 || !Double.isFinite(fatigueLevel))
             throw new IllegalArgumentException("Fatigue Level Cannot be negative of greater than 100");
         else this.fatigueLevel = fatigueLevel;
         this.mission = mission;
@@ -66,6 +73,11 @@ public abstract class Personnel implements Agent
         return new HashSet<>(skills);
     }
 
+    @Override
+    public boolean hasSkill(Skills skill) {
+        return skill != null && this.skills.contains(skill);
+    }
+
     public double getFatigueLevel(){
         return fatigueLevel;
     }
@@ -81,12 +93,30 @@ public abstract class Personnel implements Agent
     public Mission getMission(){
         return this.mission;
     }
+
+
     
 
     public void setMission(Mission mission)
     {
-        if(!canPerform(mission))
-            throw new IllegalArgumentException("Person Cannot  Perform That Mission");
+        if (mission == null) {
+            throw new IllegalArgumentException("Invalid mission");
+        }
+        mission.assign(this);
+    }
+    @Override 
+    public void assignMission(Mission mission)
+    {
+        if (mission == null) {
+            throw new IllegalArgumentException("Invalid mission");
+        }
+        if (!mission.isAssigningAgent(this)) {
+            mission.assign(this);
+            return;
+        }
+        if (!canPerform(mission)) {
+            throw new IllegalArgumentException("Person Cannot Perform That Mission");
+        }
         this.mission = mission;
         this.availability = false;
     }
@@ -104,7 +134,7 @@ public abstract class Personnel implements Agent
     }
     
     public void setFatigueLevel(double fatigueLevel){
-        if(fatigueLevel<0 || fatigueLevel>100)
+        if(fatigueLevel<0 || fatigueLevel>100 || !Double.isFinite(fatigueLevel))
             throw new IllegalArgumentException("Fatigue Level Cannot be negative of greater than 100");
         else this.fatigueLevel = fatigueLevel;
     }
@@ -120,7 +150,11 @@ public abstract class Personnel implements Agent
     {
         if(skills==null || skills.isEmpty())
             throw new IllegalArgumentException("Skills Cannot be Null or IsEmpty");
-        else this.skills = new HashSet<>(skills);
+        for (Skills skill : skills) {
+            if (skill == null)
+                throw new IllegalArgumentException("Skills Cannot Contain Null");
+        }
+        this.skills = new HashSet<>(skills);
     }
 
 

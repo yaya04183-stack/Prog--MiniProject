@@ -1,11 +1,21 @@
 package agents;
 
 import enums.EmergencyType;
+import enums.Capability;
+import enums.Skills;
 import missions.Mission;
 
 public interface Agent {
 
     boolean canPerform(Mission mission);
+
+    default boolean hasSkill(Skills skill) {
+        return false;
+    }
+
+    default boolean hasCapability(Capability capability) {
+        return false;
+    }
 
     boolean isAvailable();
 
@@ -14,6 +24,8 @@ public interface Agent {
     void setAvailability(boolean availability);
 
     String getCurrentLocation();
+
+    void  assignMission(Mission mission);
 
     void setCurrentLocation(String currentLocation);
 

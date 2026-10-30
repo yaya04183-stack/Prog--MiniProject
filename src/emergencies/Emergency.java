@@ -2,6 +2,8 @@ package emergencies;
 
 import enums.EmergencyStatus;
 import enums.EmergencyType;
+import agents.Agent;
+import java.util.List;
 
 public abstract class Emergency
 {
@@ -20,14 +22,22 @@ public abstract class Emergency
     public EmergencyStatus getStatus() { return status; }
     public String getFailureReason() { return failureReason; }
 
-    protected void markResolved()
+    public abstract boolean hasRequiredResponders(List<Agent> responders);
+
+    public void markResolved()
     {
         status = EmergencyStatus.RESOLVED;
+        failureReason = "";
     }
 
-    protected void markUnresolved(String reason)
-    {
+    public void markUnresolved(String reason)
+    {   
+        if(reason==null || reason.isBlank())
+            throw new IllegalArgumentException("Reason Cannot be NULL Or Empty String");
+        else 
+        {
         status = EmergencyStatus.UNRESOLVED;
         failureReason = reason;
+        }
     }
 }

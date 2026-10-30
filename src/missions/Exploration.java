@@ -1,8 +1,11 @@
 package missions;
 import java.util.Map;
+import java.util.List;
 import java.util.Set;
+import agents.Agent;
 import enums.Resources;
 import enums.Capability;
+import enums.Skills;
 import facilities.Facilities;
 
 
@@ -28,5 +31,16 @@ public class Exploration extends Mission
     public String getRegion()
     {
         return this.region;
+    }
+
+    @Override
+    public boolean hasValidTeamComposition(List<Agent> candidateAgents) {
+        return candidateAgents != null
+                && candidateAgents.stream().anyMatch(agent -> agent != null
+                        && agent.hasSkill(Skills.SCIENTIFIC))
+                && candidateAgents.stream().anyMatch(agent -> agent != null
+                        && agent.hasCapability(Capability.SURFACE_TRAVEL))
+                && candidateAgents.stream().anyMatch(agent -> agent != null
+                        && agent.hasCapability(Capability.EQUIPMENT_CARRYING));
     }
 }

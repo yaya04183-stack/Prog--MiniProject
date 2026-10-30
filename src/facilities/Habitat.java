@@ -13,8 +13,8 @@ public class Habitat extends Facilities
     private final LifeSupportSystem lifeSupport;
 
     public Habitat(String location, double capacity, OperationalStatus status,
-                   Map<Resources, Double> resources, List<Equipment> equipment,
-                   List<Agent> occupants)
+                Map<Resources, Double> resources, List<Equipment> equipment,
+                List<Agent> occupants)
     {
         super(FacilityType.HABITAT, location, capacity, status, resources, equipment, occupants);
         this.lifeSupport = new LifeSupportSystem();

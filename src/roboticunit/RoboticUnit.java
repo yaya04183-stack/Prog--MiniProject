@@ -15,6 +15,7 @@ public abstract class RoboticUnit implements Agent {
     private String currentLocation;
     private boolean availability;
     private Set<Capability> capabilities;
+    private Mission mission;
 
     public RoboticUnit(
             double batteryLevel,
@@ -23,7 +24,7 @@ public abstract class RoboticUnit implements Agent {
             boolean availability,
             Set<Capability> capabilities) {
 
-        if (batteryLevel < 0 || batteryLevel > 100) {
+        if (batteryLevel < 0 || batteryLevel > 100||!Double.isFinite(batteryLevel)) {
             throw new IllegalArgumentException("Invalid Battery Level");
         }
         this.batteryLevel = batteryLevel;
@@ -65,10 +66,19 @@ public abstract class RoboticUnit implements Agent {
         return new HashSet<>(this.capabilities);
     }
 
+    @Override
+    public boolean hasCapability(Capability capability) {
+        return capability != null && this.capabilities.contains(capability);
+    }
+
+    public Mission getMission(){
+        return this.mission;
+    }
+
     // Setters
 
     public void setBatteryLevel(double batteryLevel) {
-        if (batteryLevel < 0 || batteryLevel > 100) {
+        if (batteryLevel < 0 || batteryLevel > 100 || !Double.isFinite(batteryLevel)) {
             throw new IllegalArgumentException("Invalid Battery Level");
         }
 
@@ -92,16 +102,22 @@ public abstract class RoboticUnit implements Agent {
     }
 
     public void setAvailability(boolean availability) {
+        if (this.mission != null && availability) {
+            throw new IllegalStateException("Robot is still assigned to a mission");
+        }
         this.availability = availability;
     }
 
     public void setCapabilities(Set<Capability> capabilities) {
         if (capabilities == null
-                || capabilities.isEmpty()
-                || capabilities.contains(null)) {
+                || capabilities.isEmpty()) {
             throw new IllegalArgumentException("Invalid Capabilities");
         }
-
+        for (Capability capability : capabilities) {
+        if (capability == null) {
+            throw new IllegalArgumentException("Invalid Capabilities");
+        }
+    }
         this.capabilities = new HashSet<>(capabilities);
     }
 
@@ -109,6 +125,7 @@ public abstract class RoboticUnit implements Agent {
 
     @Override
     public void makeAvailable() {
+        this.mission = null;
         setAvailability(true);
     }
 
@@ -140,5 +157,21 @@ public abstract class RoboticUnit implements Agent {
             default:
                 return false;
         }
+    }
+
+    @Override 
+    public void assignMission(Mission mission){
+        if(mission == null){
+            throw new IllegalArgumentException("Invalid Mission");
+        }
+        if(!mission.isAssigningAgent(this)){
+            mission.assign(this);
+            return;
+        }
+        if(!canPerform(mission)){
+            throw new IllegalArgumentException("Cannot perform mission");
+        }
+        this.mission = mission;
+        setAvailability(false);
     }
 }

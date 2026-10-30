@@ -16,7 +16,7 @@ public class PowerStation extends Facilities
                         List<Agent> occupants, double outputPerTimeUnit)
     {
         super(FacilityType.POWER_STATION, location, capacity, status, resources, equipment, occupants);
-        if (outputPerTimeUnit < 0)
+        if (outputPerTimeUnit < 0 || !Double.isFinite(outputPerTimeUnit))
             throw new IllegalArgumentException("Invalid output");
         this.outputPerTimeUnit = outputPerTimeUnit;
     }

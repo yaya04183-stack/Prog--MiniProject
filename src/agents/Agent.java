@@ -9,6 +9,14 @@ public interface Agent {
 
     boolean canPerform(Mission mission);
 
+    default boolean hasEnoughBatteryFor(Mission mission) {
+        return mission != null;
+    }
+
+    default boolean consumeBatteryForTimeUnit() {
+        return true;
+    }
+
     default boolean hasSkill(Skills skill) {
         return false;
     }

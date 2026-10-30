@@ -4,6 +4,9 @@ import missions.Mission;
 import enums.Capability;
 import agents.Agent;
 import enums.EmergencyType;
+import facilities.Equipment;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 
@@ -16,6 +19,9 @@ public abstract class RoboticUnit implements Agent {
     private boolean availability;
     private Set<Capability> capabilities;
     private Mission mission;
+    private List<Equipment> equipment = new ArrayList<>();
+
+    private static final double BATTERY_COST_PER_TIME_UNIT = 1.0;
 
     public RoboticUnit(
             double batteryLevel,
@@ -64,6 +70,15 @@ public abstract class RoboticUnit implements Agent {
 
     public Set<Capability> getCapabilities() {
         return new HashSet<>(this.capabilities);
+    }
+
+    public List<Equipment> getEquipment() {
+        return new ArrayList<>(this.equipment);
+    }
+
+    public boolean hasOperationalEquipment() {
+        return this.equipment.stream().anyMatch(item ->
+                item.getOperationalStatus() == enums.OperationalStatus.OPERATIONAL);
     }
 
     @Override
@@ -121,6 +136,13 @@ public abstract class RoboticUnit implements Agent {
         this.capabilities = new HashSet<>(capabilities);
     }
 
+    public void setEquipment(List<Equipment> equipment) {
+        if (equipment == null || equipment.stream().anyMatch(item -> item == null)) {
+            throw new IllegalArgumentException("Invalid Equipment");
+        }
+        this.equipment = new ArrayList<>(equipment);
+    }
+
     // Agent methods
 
     @Override
@@ -138,10 +160,26 @@ public abstract class RoboticUnit implements Agent {
     public boolean canPerform(Mission mission) {
         return mission != null
                 && isAvailable()
-                && getBatteryLevel() > 0
+                && hasEnoughBatteryFor(mission)
                 && getCapabilities().containsAll(
                         mission.getRequiredCapabilities()
                 );
+    }
+
+    @Override
+    public boolean hasEnoughBatteryFor(Mission mission) {
+        return mission != null
+                && this.batteryLevel >= mission.getNeededTimesUnits()
+                        * BATTERY_COST_PER_TIME_UNIT;
+    }
+
+    @Override
+    public boolean consumeBatteryForTimeUnit() {
+        if (this.batteryLevel < BATTERY_COST_PER_TIME_UNIT) {
+            return false;
+        }
+        this.batteryLevel -= BATTERY_COST_PER_TIME_UNIT;
+        return true;
     }
 
     @Override
@@ -153,7 +191,9 @@ public abstract class RoboticUnit implements Agent {
         switch (emergencyType) {
             case OXYGEN_LEAK:
             case ROVER_BREAKDOWN:
-                return capabilities.contains(Capability.EQUIPMENT_REPAIR);
+                return isAvailable()
+                        && this.batteryLevel > 0
+                        && capabilities.contains(Capability.EQUIPMENT_REPAIR);
             default:
                 return false;
         }

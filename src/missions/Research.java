@@ -59,7 +59,8 @@ public class Research extends Mission
         }
         return laboratory.getEquipment().stream()
                 .anyMatch(equipment -> equipment.getOperationalStatus()
-                        == OperationalStatus.OPERATIONAL);
+                        == OperationalStatus.OPERATIONAL
+                        && equipment.getCategory() == facilities.Equipment.Category.SCIENTIFIC);
     }
 
     @Override

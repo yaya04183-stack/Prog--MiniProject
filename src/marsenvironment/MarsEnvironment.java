@@ -7,6 +7,7 @@ import enums.Skills;
 import java.util.List;
 import missions.Exploration;
 import missions.Mission;
+import missions.Rescue;
 
 public class MarsEnvironment {
 
@@ -46,14 +47,14 @@ public class MarsEnvironment {
         }
 
         boolean usesRemoteDrone = false;
-        boolean requiresCommunication = false;
+        boolean hasCommunicationAgent = false;
 
         for (Agent agent : agents) {
             if (agent == null) {
                 continue;
             }
             usesRemoteDrone |= agent.hasCapability(Capability.AERIAL_RECONNAISSANCE);
-            requiresCommunication |= agent.hasSkill(Skills.COMMUNICATION);
+            hasCommunicationAgent |= agent.hasSkill(Skills.COMMUNICATION);
         }
 
         if (environmentState == EnviromentStates.DUST_STORM
@@ -66,7 +67,7 @@ public class MarsEnvironment {
             if (usesRemoteDrone) {
                 return "Communication disruption prevents remote drone control";
             }
-            if (requiresCommunication) {
+            if (mission instanceof Rescue && hasCommunicationAgent) {
                 return "Communication disruption prevents communication-dependent missions";
             }
         }
@@ -88,7 +89,7 @@ public class MarsEnvironment {
             if (hasCapability(agents, Capability.AERIAL_RECONNAISSANCE)) {
                 return "Communication disruption prevents remote drone control";
             }
-            if (hasSkill(agents, Skills.COMMUNICATION)) {
+            if (mission instanceof Rescue && hasSkill(agents, Skills.COMMUNICATION)) {
                 return "Communication disruption caused the communication-dependent mission to fail";
             }
         }

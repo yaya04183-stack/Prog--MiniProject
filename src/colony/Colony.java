@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 
 import enums.Resources;
 import enums.OperationalStatus;
@@ -15,6 +18,7 @@ import personnel.Personnel;
 import roboticunit.RoboticUnit;
 import agents.Agent;
 import emergencies.Emergency;
+import marsenvironment.MarsEnvironment;
 
 
 import java.util.HashSet;
@@ -28,6 +32,9 @@ public class Colony {
     private List<Mission> missions;
     private List<Emergency> emergencies;
     private Mission activeMission;
+    private MarsEnvironment marsEnvironment;
+    private final Set<Mission> resourcesPreparedMissions =
+            Collections.newSetFromMap(new IdentityHashMap<>());
 
     public Colony() 
     {
@@ -56,7 +63,9 @@ public class Colony {
         }
         else 
         {
-            this.facilities.add(facility);
+            if (!this.facilities.contains(facility)) {
+                this.facilities.add(facility);
+            }
         }
     }
 
@@ -131,6 +140,15 @@ public class Colony {
             return false;
         }
 
+        if (this.marsEnvironment != null) {
+            String restriction = this.marsEnvironment.getMissionRestrictionReason(mission, agents);
+            if (restriction != null) {
+                mission.rejectMission(restriction);
+                this.missions.add(mission);
+                return false;
+            }
+        }
+
         if (!mission.checkresources(getColonyResourceTotal())) {
             mission.rejectMission("Insufficient resources for mission");
             this.missions.add(mission);
@@ -150,13 +168,17 @@ public class Colony {
             }
         }catch(RuntimeException e){
             for (Agent agent : assignedAgents){
-                mission.unassign(agent);
+                if (mission.getAgents().contains(agent)) {
+                    mission.unassign(agent);
+                }
             }
 
             this.activeMission = null;
             this.missions.remove(mission);
 
-            mission.rejectMission("Mission assignment failed: " + e.getMessage());
+            if (mission.getState() == null) {
+                mission.rejectMission("Mission assignment failed: " + e.getMessage());
+            }
             this.missions.add(mission);
 
             return false;
@@ -180,16 +202,93 @@ public class Colony {
         if(this.activeMission == null){
             return false;
         }
-        this.activeMission.startMission();
-        return true;
+        Mission mission = this.activeMission;
+        mission.startMission();
+        return mission.getState() == Mission_Emergency_States.INPROGRESS;
     }
 
     public void advanceTimeUnit() {
-        if (this.activeMission != null) {
-            this.activeMission.advanceTimeUnit();
+        if (this.activeMission == null) {
+            return;
+        }
+        if (this.marsEnvironment != null) {
+            String failureReason = this.marsEnvironment
+                    .getActiveMissionFailureReason(this.activeMission);
+            if (failureReason != null) {
+                failActiveMission(failureReason);
+                return;
+            }
+        }
+        this.activeMission.advanceTimeUnit();
+    }
+
+    /** Prepares mission resources atomically, once per mission. */
+    public boolean prepareMissionStart(Mission mission) {
+        if (mission == null || this.activeMission != mission
+                || mission.getState() != Mission_Emergency_States.ASSIGNED) {
+            return false;
+        }
+        if (this.resourcesPreparedMissions.contains(mission)) {
+            return true;
+        }
+
+        Map<Resources, Double> remaining = mission.getRequiredResources();
+        Map<Facilities, Map<Resources, Double>> deductionPlan = new LinkedHashMap<>();
+        Set<Facilities> visitedFacilities = Collections.newSetFromMap(new IdentityHashMap<>());
+        for (Facilities facility : this.facilities) {
+            if (facility == null || !visitedFacilities.add(facility)
+                    || facility.getOperationalStatus() != OperationalStatus.OPERATIONAL) {
+                continue;
+            }
+            for (Resources resource : new ArrayList<>(remaining.keySet())) {
+                double needed = remaining.get(resource);
+                if (needed <= 0) {
+                    continue;
+                }
+                double allocated = Math.min(needed, facility.getResourceAmount(resource));
+                if (allocated > 0) {
+                    deductionPlan.computeIfAbsent(facility, key -> new LinkedHashMap<>())
+                            .put(resource, allocated);
+                    remaining.put(resource, needed - allocated);
+                }
+            }
+        }
+
+        if (remaining.values().stream().anyMatch(amount -> amount > 0)) {
+            return false;
+        }
+
+        Map<Facilities, Map<Resources, Double>> originalResources = new LinkedHashMap<>();
+        for (Facilities facility : deductionPlan.keySet()) {
+            originalResources.put(facility, facility.getResources());
+        }
+        try {
+            for (Map.Entry<Facilities, Map<Resources, Double>> facilityEntry
+                    : deductionPlan.entrySet()) {
+                for (Map.Entry<Resources, Double> resourceEntry
+                        : facilityEntry.getValue().entrySet()) {
+                    double deducted = facilityEntry.getKey().deductResource(
+                            resourceEntry.getKey(), resourceEntry.getValue());
+                    if (deducted != resourceEntry.getValue()) {
+                        restoreResources(originalResources);
+                        return false;
+                    }
+                }
+            }
+        } catch (RuntimeException deductionFailure) {
+            restoreResources(originalResources);
+            return false;
+        }
+
+        this.resourcesPreparedMissions.add(mission);
+        return true;
+    }
+
+    private void restoreResources(Map<Facilities, Map<Resources, Double>> originalResources) {
+        for (Map.Entry<Facilities, Map<Resources, Double>> entry : originalResources.entrySet()) {
+            entry.getKey().setResources(entry.getValue());
         }
     }
-    
 
     public Map<Resources, Double> getColonyResourceTotal()
     {
@@ -225,9 +324,17 @@ public class Colony {
 
         Mission_Emergency_States state = mission.getState();
         if (state == Mission_Emergency_States.COMPLETED
-                || state == Mission_Emergency_States.FAILED) {
+                || state == Mission_Emergency_States.FAILED
+                || (state == null && mission.getAgents().isEmpty())) {
             this.activeMission = null;
         }
+    }
+
+    public void setMarsEnvironment(MarsEnvironment marsEnvironment) {
+        if (marsEnvironment == null) {
+            throw new IllegalArgumentException("Mars environment cannot be null");
+        }
+        this.marsEnvironment = marsEnvironment;
     }
 
 private List<Agent> getAvailableResponders(Emergency emergency)
@@ -247,6 +354,7 @@ private List<Agent> getAvailableResponders(Emergency emergency)
     }
     return responders;
 }
+
 public boolean handleEmergency(Emergency emergency)
 {
     if(emergency==null)
@@ -254,7 +362,114 @@ public boolean handleEmergency(Emergency emergency)
     if(this.emergencies.contains(emergency))
         return false;
     emergencies.add(emergency);
+
+    emergency.registerOccurrence();
+
     List<Agent> responders = getAvailableResponders(emergency);
+    if(!emergency.hasRequiredResponders(responders))
+    {
+        emergency.markUnresolved("Required Responders Is Not Available");
+        return false;
+    }
+
+    if (emergency.requiresOperationalFacility() && !hasOperationalFacilityAt(emergency)) {
+        emergency.markUnresolved("No operational facility is available at the emergency location");
+        return false;
+    }
+
+    if (!consumeEmergencyResources(emergency.getRequiredResources())) {
+        emergency.markUnresolved("Insufficient resources for emergency response");
+        return false;
+    }
+
+    Object location = emergency.getLocation();
+    String responseLocation = location instanceof Facilities facility
+            ? facility.getLocation() : (String) location;
+    List<Agent> dispatched = new ArrayList<>();
+    try {
+        for (Agent responder : responders) {
+            responder.setAvailability(false);
+            dispatched.add(responder);
+            responder.setCurrentLocation(responseLocation);
+        }
+        emergency.setAgents(dispatched);
+        if (!emergency.applyResponse()) {
+            emergency.markUnresolved("Emergency response could not be completed");
+            return false;
+        }
+        emergency.markResolved();
+        return true;
+    } catch (RuntimeException responseFailure) {
+        emergency.markUnresolved("Emergency response failed: " + responseFailure.getMessage());
+        return false;
+    } finally {
+        for (Agent responder : dispatched) {
+            responder.makeAvailable();
+        }
+    }
+}
+
+private boolean hasOperationalFacilityAt(Emergency emergency) {
+    Object location = emergency.getLocation();
+    if (location instanceof Facilities target) {
+        return this.facilities.contains(target)
+                && target.getOperationalStatus() == OperationalStatus.OPERATIONAL;
+    }
+    String targetLocation = (String) location;
+    return this.facilities.stream().anyMatch(facility -> facility != null
+            && facility.getOperationalStatus() == OperationalStatus.OPERATIONAL
+            && facility.getLocation().equals(targetLocation));
+}
+
+private boolean consumeEmergencyResources(Map<Resources, Double> requiredResources) {
+    Map<Resources, Double> remaining = new LinkedHashMap<>(requiredResources);
+    Map<Facilities, Map<Resources, Double>> deductionPlan = new LinkedHashMap<>();
+    Set<Facilities> visitedFacilities = Collections.newSetFromMap(new IdentityHashMap<>());
+
+    for (Facilities facility : this.facilities) {
+        if (facility == null || !visitedFacilities.add(facility)
+                || facility.getOperationalStatus() != OperationalStatus.OPERATIONAL) {
+            continue;
+        }
+        for (Resources resource : new ArrayList<>(remaining.keySet())) {
+            double needed = remaining.get(resource);
+            if (needed <= 0) {
+                continue;
+            }
+            double allocated = Math.min(needed, facility.getResourceAmount(resource));
+            if (allocated > 0) {
+                deductionPlan.computeIfAbsent(facility, key -> new LinkedHashMap<>())
+                        .put(resource, allocated);
+                remaining.put(resource, needed - allocated);
+            }
+        }
+    }
+
+    if (remaining.values().stream().anyMatch(amount -> amount > 0)) {
+        return false;
+    }
+
+    Map<Facilities, Map<Resources, Double>> originalResources = new LinkedHashMap<>();
+    for (Facilities facility : deductionPlan.keySet()) {
+        originalResources.put(facility, facility.getResources());
+    }
+    try {
+        for (Map.Entry<Facilities, Map<Resources, Double>> facilityEntry
+                : deductionPlan.entrySet()) {
+            for (Map.Entry<Resources, Double> resourceEntry
+                    : facilityEntry.getValue().entrySet()) {
+                double deducted = facilityEntry.getKey().deductResource(
+                        resourceEntry.getKey(), resourceEntry.getValue());
+                if (deducted != resourceEntry.getValue()) {
+                    restoreResources(originalResources);
+                    return false;
+                }
+            }
+        }
+    } catch (RuntimeException deductionFailure) {
+        restoreResources(originalResources);
+        return false;
+    }
     return true;
 }
 

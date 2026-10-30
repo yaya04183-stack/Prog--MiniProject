@@ -8,15 +8,9 @@ import missions.Rescue;
 
 public class Engineer extends Personnel
 {   
-    public Engineer(String name,int id,String healthStatus,String currentLocation,Set<Skills> skills,double fatigueLevel,boolean availability,Mission mission)
+    public Engineer(String name,int id,String healthStatus,String currentLocation,Set<Skills> skills,double fatigueLevel,boolean availability)
     {
         super(name,id,healthStatus,currentLocation,skills,fatigueLevel,availability,null);
-        if(mission != null)
-            if(!canPerform(mission))
-            {
-                throw new IllegalArgumentException("Engineer Cannot Make that Mission");
-            }
-            else super.setMission(mission);
     }
     
     

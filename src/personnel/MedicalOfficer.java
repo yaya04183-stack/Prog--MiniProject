@@ -8,16 +8,9 @@ import enums.EmergencyType;
 
 public class MedicalOfficer extends Personnel
 {
-    public MedicalOfficer(String name,int id,String healthStatus,String currentLocation,Set<Skills> skills,double fatigLevel,boolean availability,Mission mission)
+    public MedicalOfficer(String name,int id,String healthStatus,String currentLocation,Set<Skills> skills,double fatigLevel,boolean availability)
     {
         super(name,id,healthStatus,currentLocation,skills,fatigLevel,availability,null);
-        if(mission!=null)
-            if(canPerform(mission))
-            {
-                super.setMission(mission);
-            }
-            else throw new IllegalArgumentException("Medical Officier Cannot Make that Mission");
-        
     }
     @Override 
     public boolean canPerform(Mission  mission)

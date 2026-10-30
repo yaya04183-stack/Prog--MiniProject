@@ -2,6 +2,8 @@ package emergencies;
 
 import enums.EmergencyType;
 import personnel.Personnel;
+import java.util.Map;
+import enums.Resources;
 
 public class MedicalEmergency extends Emergency
 {
@@ -9,12 +11,14 @@ public class MedicalEmergency extends Emergency
 
     public MedicalEmergency(Personnel patient)
     {
-        super(EmergencyType.MEDICAL);
+        super(EmergencyType.MEDICAL,
+                patient == null ? null : patient.getCurrentLocation());
         if (patient == null)
         {
             throw new IllegalArgumentException("Invalid patient");
         }
         this.patient = patient;
+        setRequiredResources(Map.of(Resources.MEDICAL_SUPPLIES, 1.0));
     }
 
     public Personnel getPatient()
@@ -29,5 +33,16 @@ public class MedicalEmergency extends Emergency
             throw new IllegalArgumentException("Invalid patient");
         }
         this.patient = patient;
+    }
+
+    @Override
+    public boolean requiresOperationalFacility() {
+        return true;
+    }
+
+    @Override
+    public boolean applyResponse() {
+        this.patient.setHealthStatus("Stable");
+        return true;
     }
 }

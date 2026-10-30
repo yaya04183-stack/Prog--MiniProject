@@ -121,6 +121,10 @@ public abstract class Mission {
 
     public void setRequiredResources(Map<Resources,Double> requiredResources)
     {
+        if (this.state != null) {
+            throw new IllegalStateException(
+                    "Cannot change required resources after mission assignment");
+        }
         validateRequiredResources(requiredResources);
         this.requiredResources = new HashMap<>(requiredResources);
     }
@@ -266,6 +270,15 @@ public void assign(Agent agent) {
     this.assigningAgent = agent;
     try {
         agent.assignMission(this);
+    } catch (RuntimeException assignmentFailure) {
+        // assignMission implementations may update their own state before
+        // throwing. Restore the agent even though it was not added to agents.
+        try {
+            agent.makeAvailable();
+        } catch (RuntimeException rollbackFailure) {
+            assignmentFailure.addSuppressed(rollbackFailure);
+        }
+        throw assignmentFailure;
     } finally {
         this.assigningAgent = null;
     }
@@ -290,6 +303,9 @@ public void assign(Agent agent) {
 
         if(this.agents.isEmpty()&& this.state == Mission_Emergency_States.ASSIGNED){
             this.state = null;
+            notifyColonyIfTerminal();
+        } else if (!hasValidTeamComposition(this.agents)) {
+            failMission("Mission team no longer meets its requirements after unassignment");
         }
     }
 
@@ -356,7 +372,13 @@ public void assign(Agent agent) {
                 "Mission is not assigned");
     }
 
+    if (this.agents.stream().anyMatch(agent -> !agent.hasEnoughBatteryFor(this))) {
+        failMission("An assigned agent does not have enough battery for the mission");
+        return;
+    }
+
     if (!this.colony.prepareMissionStart(this)) {
+        failMission("Insufficient resources to start mission");
         return;
     }
 
@@ -367,6 +389,13 @@ public void assign(Agent agent) {
     public void advanceTimeUnit() {
         if (this.state != Mission_Emergency_States.INPROGRESS) {
             return;
+        }
+
+        for (Agent agent : this.agents) {
+            if (!agent.consumeBatteryForTimeUnit()) {
+                failMission("An assigned agent ran out of battery");
+                return;
+            }
         }
 
         this.elapsedTimeUnits++;

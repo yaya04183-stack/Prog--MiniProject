@@ -7,6 +7,7 @@ import enums.Resources;
 import enums.Capability;
 import enums.Skills;
 import facilities.Facilities;
+import roboticunit.RoboticUnit;
 
 
 
@@ -38,9 +39,9 @@ public class Exploration extends Mission
         return candidateAgents != null
                 && candidateAgents.stream().anyMatch(agent -> agent != null
                         && agent.hasSkill(Skills.SCIENTIFIC))
-                && candidateAgents.stream().anyMatch(agent -> agent != null
-                        && agent.hasCapability(Capability.SURFACE_TRAVEL))
-                && candidateAgents.stream().anyMatch(agent -> agent != null
-                        && agent.hasCapability(Capability.EQUIPMENT_CARRYING));
+                && candidateAgents.stream().anyMatch(agent -> agent instanceof RoboticUnit rover
+                        && rover.hasCapability(Capability.SURFACE_TRAVEL)
+                        && rover.hasCapability(Capability.EQUIPMENT_CARRYING)
+                        && rover.hasOperationalEquipment());
     }
 }

@@ -9,16 +9,9 @@ import missions.Research;
 
 public class Scientist extends Personnel
 {  
-    public Scientist(String name,int id,String healthStatus,String currentLocation,Set<Skills> skills,double fatigueLevel,boolean availability,Mission mission)
+    public Scientist(String name,int id,String healthStatus,String currentLocation,Set<Skills> skills,double fatigueLevel,boolean availability)
     {
         super(name,id,healthStatus,currentLocation,skills,fatigueLevel,availability,null);
-        if(mission!=null)
-            if(!canPerform(mission))
-            {
-                throw new IllegalArgumentException("Scientist Cannot Make That Mission");
-            }
-            else super.setMission(mission);
-        
     }
     
     @Override 

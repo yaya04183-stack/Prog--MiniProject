@@ -1,10 +1,9 @@
 package emergencies;
 
-import java.text.BreakIterator;
-
 import enums.EmergencyType;
-import facilities.Facilities;
 import roboticunit.ExplorationRover;
+import agents.Agent;
+import java.util.List;
 
 
 public class RoverBreakdown  extends Emergency {
@@ -12,7 +11,7 @@ public class RoverBreakdown  extends Emergency {
     private ExplorationRover affected_facility;
 
     public RoverBreakdown(ExplorationRover affected_facility){
-        super(EmergencyType.ROVER_BREAKDOWN);
+        super(EmergencyType.ROVER_BREAKDOWN, "Martian Surface");
         setAffected_facility(affected_facility);
     }
 
@@ -25,5 +24,24 @@ public class RoverBreakdown  extends Emergency {
             throw new IllegalArgumentException("Invalid affected facility");
         }
         this.affected_facility = affected_facility;
+    }
+
+    @Override
+    protected void onOccurrence() {
+        if (this.affected_facility.getMission() != null) {
+            this.affected_facility.getMission().failMission("Rover breakdown");
+        }
+        this.affected_facility.setHealthStatus("DAMAGED");
+        this.affected_facility.setAvailability(false);
+    }
+
+    @Override
+    public boolean applyResponse() {
+        return true;
+    }
+
+    @Override
+    public boolean hasRequiredResponders(List<Agent> responders) {
+        return super.hasRequiredResponders(responders);
     }
 }

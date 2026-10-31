@@ -39,6 +39,7 @@ public final class AdminConsole extends JFrame {
     private final ColonyAnimationPanel animationPanel;
     private final List<Refreshable> refreshables = new ArrayList<>();
     private final JTextArea logArea = new JTextArea();
+    private final SoundManager sound = new SoundManager();
 
     private final Map<Mission, Mission_Emergency_States> lastMissionStates = new IdentityHashMap<>();
     private final Map<Emergency, EmergencyStatus> lastEmergencyStatuses = new IdentityHashMap<>();
@@ -110,7 +111,10 @@ public final class AdminConsole extends JFrame {
 
         context.addChangeListener(this::refreshAll);
         context.addLogListener(line -> SwingUtilities.invokeLater(() -> logArea.insert(line + "\n", 0)));
-        context.addEmergencyListener(location -> animationPanel.flashEmergency(location));
+        context.addEmergencyListener(location -> {
+            sound.play(SoundManager.Effect.EMERGENCY_STARTED);
+            animationPanel.flashEmergency(location);
+        });
         context.addEffectListener(effect -> animationPanel.addEffect(effect));
 
         Timer animationTimer = new Timer(40, e -> animationPanel.tick());
@@ -118,6 +122,7 @@ public final class AdminConsole extends JFrame {
 
         Timer pollTimer = new Timer(700, e -> {
             detectAndLogTransitions();
+            updateAmbientSound();
             refreshAll();
         });
         pollTimer.start();
@@ -174,8 +179,15 @@ public final class AdminConsole extends JFrame {
             }
         });
 
+        javax.swing.JToggleButton mute = new javax.swing.JToggleButton("🔊 Sound On");
+        mute.addActionListener(e -> {
+            sound.setMuted(mute.isSelected());
+            mute.setText(mute.isSelected() ? "🔇 Sound Off" : "🔊 Sound On");
+        });
+
         bar.add(newColony);
         bar.add(reloadSample);
+        bar.add(mute);
         return bar;
     }
 
@@ -186,6 +198,11 @@ public final class AdminConsole extends JFrame {
             if (previous != current) {
                 lastMissionStates.put(mission, current);
                 if (previous != null) {
+                    if (current == Mission_Emergency_States.COMPLETED) {
+                        sound.play(SoundManager.Effect.MISSION_DONE);
+                    } else if (current == Mission_Emergency_States.FAILED) {
+                        sound.play(SoundManager.Effect.MISSION_FAILED);
+                    }
                     context.log(mission.getClass().getSimpleName() + " mission transitioned "
                             + previous + " -> " + current
                             + (mission.getFailureReason() != null && current == Mission_Emergency_States.FAILED
@@ -199,11 +216,28 @@ public final class AdminConsole extends JFrame {
             if (previous != current) {
                 lastEmergencyStatuses.put(emergency, current);
                 if (previous != null) {
+                    if (current == EmergencyStatus.RESOLVED) {
+                        sound.play(SoundManager.Effect.EMERGENCY_RESOLVED);
+                    } else if (current == EmergencyStatus.UNRESOLVED) {
+                        sound.play(SoundManager.Effect.EMERGENCY_UNRESOLVED);
+                    }
                     context.log(emergency.getClass().getSimpleName() + " emergency transitioned "
                             + previous + " -> " + current);
                 }
             }
         }
+    }
+
+    /** Calm theme when nothing is wrong; emergency-specific theme while one is pending. */
+    private void updateAmbientSound() {
+        enums.EmergencyType active = null;
+        for (Emergency emergency : context.colony().getEmergencies()) {
+            if (emergency.getStatus() == EmergencyStatus.PENDING) {
+                active = emergency.getType();
+                break;
+            }
+        }
+        sound.setAlert(active);
     }
 
     private void refreshAll() {

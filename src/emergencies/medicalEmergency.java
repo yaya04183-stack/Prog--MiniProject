@@ -5,11 +5,11 @@ import personnel.Personnel;
 import java.util.Map;
 import enums.Resources;
 
-public class MedicalEmergency extends Emergency
+public class medicalEmergency extends Emergency
 {
     private Personnel patient;
 
-    public MedicalEmergency(Personnel patient)
+    public medicalEmergency(Personnel patient)
     {
         super(EmergencyType.MEDICAL,
                 patient == null ? null : patient.getCurrentLocation());

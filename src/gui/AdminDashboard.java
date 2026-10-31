@@ -56,7 +56,7 @@ import agents.Agent;
 import colony.Colony;
 import emergencies.Emergency;
 import emergencies.Fire;
-import emergencies.MedicalEmergency;
+import emergencies.medicalEmergency;
 import emergencies.OxygenLeak;
 import emergencies.RoverBreakdown;
 import enums.Capability;
@@ -1538,7 +1538,7 @@ final class AdminDashboard extends JFrame {
                     Personnel patient = chooseObject("Patient", people,
                             value -> value.getName() + " (#" + value.getId() + ") | " + value.getCurrentLocation());
                     if (patient == null) return;
-                    emergency = new MedicalEmergency(patient);
+                    emergency = new medicalEmergency(patient);
                 }
                 default -> throw new IllegalArgumentException("Unsupported emergency type: " + type);
             }

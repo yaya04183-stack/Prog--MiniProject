@@ -3,7 +3,7 @@ import enums.Skills;
 import java.util.*;
 import missions.Mission;
 import missions.Rescue;
-import emergencies.MedicalEmergency;
+import emergencies.medicalEmergency;
 import enums.EmergencyType;
 
 public class MedicalOfficer extends Personnel
@@ -21,7 +21,7 @@ public class MedicalOfficer extends Personnel
             return ((mission instanceof Rescue && super.getSkills().contains(Skills.COMMUNICATION)));
     
     }
-    public boolean canPerform(MedicalEmergency emergency)
+    public boolean canPerform(medicalEmergency emergency)
     {   
         return emergency != null
         && super.canHandleEmergency(EmergencyType.MEDICAL);

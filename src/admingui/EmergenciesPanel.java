@@ -22,7 +22,7 @@ import javax.swing.table.DefaultTableModel;
 
 import emergencies.Emergency;
 import emergencies.Fire;
-import emergencies.MedicalEmergency;
+import emergencies.medicalEmergency;
 import emergencies.OxygenLeak;
 import emergencies.RoverBreakdown;
 import facilities.Facilities;
@@ -174,7 +174,7 @@ final class EmergenciesPanel extends JPanel implements Refreshable {
                         if (patient == null) {
                             throw new IllegalArgumentException("No personnel available to be the patient.");
                         }
-                        yield new MedicalEmergency(patient);
+                        yield new medicalEmergency(patient);
                     }
                     default -> {
                         ExplorationRover rover = (ExplorationRover) roverCombo.getSelectedItem();

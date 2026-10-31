@@ -135,7 +135,9 @@ final class SoundManager {
     // -------------------------------------------------------------- effects
 
     void play(Effect effect) {
-        if (muted) {
+        // Mission effects ignore the mute button; it only silences music and emergency sounds.
+        boolean missionEffect = effect == Effect.MISSION_DONE || effect == Effect.MISSION_FAILED;
+        if (muted && !missionEffect) {
             return;
         }
         Thread t = new Thread(() -> playEffect(effect), "mars-sfx");
@@ -151,7 +153,8 @@ final class SoundManager {
                         tone(G5, 0.25, 0.3, Wave.TRIANGLE));
                 break;
             case MISSION_FAILED:
-                data = concat(tone(E4, 0.2, 0.3, Wave.TRIANGLE), tone(D4, 0.2, 0.3, Wave.TRIANGLE),
+                data = loadSfxFile("failed.wav");
+                if (data == null) data = concat(tone(E4, 0.2, 0.3, Wave.TRIANGLE), tone(D4, 0.2, 0.3, Wave.TRIANGLE),
                         tone(C4 / 1.5, 0.4, 0.3, Wave.TRIANGLE));
                 break;
             case EMERGENCY_STARTED:
@@ -215,6 +218,24 @@ final class SoundManager {
             double release = Math.min(1.0, (n - i) / (RATE * 0.05));
             buf[startSample + i] += (float) (sample * attack * release * volume);
         }
+    }
+
+    /** Optional custom effect from assets/<name> (any WAV; converted to the mixer format), or null. */
+    private static byte[] loadSfxFile(String name) {
+        for (String dir : new String[] {"assets/", "../assets/"}) {
+            java.io.File f = new java.io.File(dir + name);
+            if (!f.isFile()) {
+                continue;
+            }
+            try (javax.sound.sampled.AudioInputStream in = AudioSystem.getAudioInputStream(f);
+                 javax.sound.sampled.AudioInputStream pcm = AudioSystem.getAudioInputStream(FORMAT, in)) {
+                byte[] data = pcm.readAllBytes();
+                return java.util.Arrays.copyOf(data, data.length - data.length % 2);
+            } catch (Exception e) {
+                System.err.println("[SoundManager] could not read " + f + ": " + e);
+            }
+        }
+        return null;
     }
 
     private static byte[] loadThemeFile(byte[] fallback) {

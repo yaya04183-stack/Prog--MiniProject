@@ -179,10 +179,10 @@ public final class AdminConsole extends JFrame {
             }
         });
 
-        javax.swing.JToggleButton mute = new javax.swing.JToggleButton("🔊 Sound On");
+        javax.swing.JToggleButton mute = new javax.swing.JToggleButton("🔊 Music On");
         mute.addActionListener(e -> {
             sound.setMuted(mute.isSelected());
-            mute.setText(mute.isSelected() ? "🔇 Sound Off" : "🔊 Sound On");
+            mute.setText(mute.isSelected() ? "🔇 Music Off" : "🔊 Music On");
         });
 
         bar.add(newColony);

@@ -23,6 +23,8 @@ public abstract class Personnel implements Agent
     private Mission mission;
     
 
+    // Initializes a Personnel instance.
+    // Initializes a Personnel instance.
     public Personnel(String name,int id,String healthStatus,String currentLocation,Set<Skills> skills,double fatigueLevel,boolean availability,Mission mission)
     {   
         // name
@@ -60,50 +62,21 @@ public abstract class Personnel implements Agent
         }
 
 
-    public String getName(){
-        return name;
-    }
-    public int getId(){
-        return id;
-    }
-    public String getCurrentLocation(){
-        return  currentLocation ;
-    }
-    public Set<Skills> getSkills(){
-        return new HashSet<>(skills);
-    }
 
+    // Checks whether it has skill.
     @Override
     public boolean hasSkill(Skills skill) {
         return skill != null && this.skills.contains(skill);
     }
 
-    public double getFatigueLevel(){
-        return fatigueLevel;
-    }
     
-    public boolean getAvailability(){
-        return availability;
-    }
 
-    public String getHealthStatus() {
-    return healthStatus;
-    }
 
-    public Mission getMission(){
-        return this.mission;
-    }
 
 
     
 
-    public void setMission(Mission mission)
-    {
-        if (mission == null) {
-            throw new IllegalArgumentException("Invalid mission");
-        }
-        mission.assign(this);
-    }
+    // Assigns mission.
     @Override 
     public void assignMission(Mission mission)
     {
@@ -121,45 +94,15 @@ public abstract class Personnel implements Agent
         this.availability = false;
     }
 
-    public void setHealthStatus(String healthStatus){
-    if(healthStatus==null || healthStatus.isBlank())
-        throw new IllegalArgumentException("Health Status Connot be null or empty");
-    else this.healthStatus = healthStatus;
-    }
 
-    public void setCurrentLocation(String currentLocation){
-        if(currentLocation==null || currentLocation.isBlank())
-            throw new IllegalArgumentException("Current Locations Connot be null or emppty");
-        else this.currentLocation = currentLocation;
-    }
     
-    public void setFatigueLevel(double fatigueLevel){
-        if(fatigueLevel<0 || fatigueLevel>100 || !Double.isFinite(fatigueLevel))
-            throw new IllegalArgumentException("Fatigue Level Cannot be negative of greater than 100");
-        else this.fatigueLevel = fatigueLevel;
-    }
 
-    public void setAvailability(boolean availability) 
-    {   
-        if(mission != null && availability)
-            throw new IllegalArgumentException("Person is still assigned to a mission");
-        this.availability = availability;
-    }
 
-    public void setSkills(Set<Skills> skills)
-    {
-        if(skills==null || skills.isEmpty())
-            throw new IllegalArgumentException("Skills Cannot be Null or IsEmpty");
-        for (Skills skill : skills) {
-            if (skill == null)
-                throw new IllegalArgumentException("Skills Cannot Contain Null");
-        }
-        this.skills = new HashSet<>(skills);
-    }
 
 
     // Agent methods
 
+    // Makes available.
     @Override
     public void makeAvailable() 
     {   
@@ -167,11 +110,8 @@ public abstract class Personnel implements Agent
         setAvailability(true);
     }
 
-    @Override
-    public boolean isAvailable() {
-        return getAvailability();
-    }
 
+    // Checks whether it can perform.
     @Override
     public boolean canPerform(Mission mission) {
         if(mission != null && getAvailability())
@@ -179,6 +119,7 @@ public abstract class Personnel implements Agent
         else return false;
     }
 
+    // Checks whether it can handle emergency.
     @Override
     public boolean canHandleEmergency(EmergencyType emergencyType) {
         if(!getAvailability())
@@ -200,4 +141,91 @@ public abstract class Personnel implements Agent
                 return false;
         }
     }
+    // Getters
+
+    // Returns name.
+    public String getName(){
+        return name;
+    }
+    // Returns id.
+    public int getId(){
+        return id;
+    }
+    // Returns current location.
+    public String getCurrentLocation(){
+        return  currentLocation ;
+    }
+    // Returns skills.
+    public Set<Skills> getSkills(){
+        return new HashSet<>(skills);
+    }
+    // Returns fatigue level.
+    public double getFatigueLevel(){
+        return fatigueLevel;
+    }
+    // Returns availability.
+    public boolean getAvailability(){
+        return availability;
+    }
+    // Returns health status.
+    public String getHealthStatus() {
+    return healthStatus;
+    }
+    // Returns mission.
+    public Mission getMission(){
+        return this.mission;
+    }
+    // Checks whether available.
+    @Override
+    public boolean isAvailable() {
+        return getAvailability();
+    }
+
+    // Setters
+
+    // Sets mission.
+    public void setMission(Mission mission)
+    {
+        if (mission == null) {
+            throw new IllegalArgumentException("Invalid mission");
+        }
+        mission.assign(this);
+    }
+    // Sets health status.
+    public void setHealthStatus(String healthStatus){
+    if(healthStatus==null || healthStatus.isBlank())
+        throw new IllegalArgumentException("Health Status Connot be null or empty");
+    else this.healthStatus = healthStatus;
+    }
+    // Sets current location.
+    public void setCurrentLocation(String currentLocation){
+        if(currentLocation==null || currentLocation.isBlank())
+            throw new IllegalArgumentException("Current Locations Connot be null or emppty");
+        else this.currentLocation = currentLocation;
+    }
+    // Sets fatigue level.
+    public void setFatigueLevel(double fatigueLevel){
+        if(fatigueLevel<0 || fatigueLevel>100 || !Double.isFinite(fatigueLevel))
+            throw new IllegalArgumentException("Fatigue Level Cannot be negative of greater than 100");
+        else this.fatigueLevel = fatigueLevel;
+    }
+    // Sets availability.
+    public void setAvailability(boolean availability) 
+    {   
+        if(mission != null && availability)
+            throw new IllegalArgumentException("Person is still assigned to a mission");
+        this.availability = availability;
+    }
+    // Sets skills.
+    public void setSkills(Set<Skills> skills)
+    {
+        if(skills==null || skills.isEmpty())
+            throw new IllegalArgumentException("Skills Cannot be Null or IsEmpty");
+        for (Skills skill : skills) {
+            if (skill == null)
+                throw new IllegalArgumentException("Skills Cannot Contain Null");
+        }
+        this.skills = new HashSet<>(skills);
+    }
+
 }

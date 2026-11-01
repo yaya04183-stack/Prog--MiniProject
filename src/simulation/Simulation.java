@@ -5,15 +5,18 @@ import colony.Colony;
 public class Simulation {
     public static int time =0;
 
+    // Advances time.
     public static void advancetime()
     {
         time++;
     }
 
+    // Advances time.
     public static void advanceTime(Colony colony) {
         advanceTime(colony, 1);
     }
 
+    // Advances time.
     public static void advanceTime(Colony colony, int timeUnits) {
         if (colony == null) {
             throw new IllegalArgumentException("Colony cannot be null");
@@ -28,14 +31,17 @@ public class Simulation {
         }
     }
 
+    // Advances time.
     public static void advancetime(Colony colony) {
         advanceTime(colony, 1);
     }
 
+    // Resets time.
     public static void resettime()
     {
         time = 0;
     }
+    // Displays time.
     public static void showtime()
     {
         System.out.println("Current time: " + time);

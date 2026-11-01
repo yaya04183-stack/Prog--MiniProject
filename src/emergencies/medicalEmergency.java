@@ -21,11 +21,17 @@ public class medicalEmergency extends Emergency
         setRequiredResources(Map.of(Resources.MEDICAL_SUPPLIES, 1.0));
     }
 
+    // Getters
+
+    // Returns patient.
     public Personnel getPatient()
     {
         return patient;
     }
 
+    // Setters
+
+    // Sets patient.
     public void setPatient(Personnel patient)
     {
         if (patient == null)
@@ -35,11 +41,13 @@ public class medicalEmergency extends Emergency
         this.patient = patient;
     }
 
+    // Checks s operational facility.
     @Override
     public boolean requiresOperationalFacility() {
         return true;
     }
 
+    // Applies response.
     @Override
     public boolean applyResponse() {
         this.patient.setHealthStatus("Stable");

@@ -28,6 +28,8 @@ public abstract class Mission {
     private Colony colony;
     private Agent assigningAgent;
 
+    // Initializes a Mission instance.
+    // Initializes a Mission instance.
     public Mission(
             int neededtimesunits,
             Facilities facility,
@@ -63,6 +65,7 @@ public abstract class Mission {
         this.facility = facility;
     }
 
+    // Validates required resources.
     private void validateRequiredResources(Map<Resources,Double> requiredResources)
     {
         if(requiredResources == null)
@@ -79,46 +82,56 @@ public abstract class Mission {
 
     // Getters
 
+    // Returns agents.
     public List<Agent> getAgents() {
         return new ArrayList<>(this.agents);
     }
 
+    // Returns needed times units.
     public int getNeededTimesUnits() {
 
         
         return this.neededtimesunits;
     }
 
+    // Returns state.
     public Mission_Emergency_States getState() {
         return this.state;
     }
 
+    // Returns elapsed time units.
     public int getElapsedTimeUnits() {
         return this.elapsedTimeUnits;
     }
 
+    // Returns facility.
     public Facilities getFacility() {
         return this.facility;
     }
 
+    // Returns required resources.
     public Map<Resources, Double> getRequiredResources() {
         return new HashMap<>(this.requiredResources);
     }
 
+    // Returns required capabilities.
     public Set<Capability> getRequiredCapabilities() {
         return new HashSet<>(this.requiredCapabilities);
     }
 
+    // Checks whether it has valid team composition.
     public boolean hasValidTeamComposition(List<Agent> candidateAgents) {
         return candidateAgents != null && !candidateAgents.isEmpty();
     }
 
+    // Returns failure reason.
     public String getFailureReason(){
         return this.failureReason;
     }
 
     // Setters
 
+    // Sets required resources.
     public void setRequiredResources(Map<Resources,Double> requiredResources)
     {
         if (this.state != null) {
@@ -129,6 +142,7 @@ public abstract class Mission {
         this.requiredResources = new HashMap<>(requiredResources);
     }
 
+    // Sets facility.
     public void setFacility(Facilities facility) {
         if(this instanceof Research){
             if(!(facility instanceof Laboratory)){
@@ -138,6 +152,7 @@ public abstract class Mission {
         this.facility = facility;  }
 
 
+    // Sets needed time units.
     public void setNeededTimeUnits(int neededtimesunits) {
         if (neededtimesunits <= 0) {
             throw new IllegalArgumentException("Invalid time units");
@@ -147,6 +162,7 @@ public abstract class Mission {
     }
 
 
+    // Sets required capabilities.
     public void setRequiredCapabilities(
             Set<Capability> capabilities) {
 
@@ -165,6 +181,7 @@ public abstract class Mission {
                 new HashSet<>(capabilities);
     }
 
+    // Sets failure reason.
     public void setFailureReason(String failureReason){
         if(failureReason == null || failureReason.isBlank()){
             throw new IllegalArgumentException("Invalid failure reason");
@@ -172,6 +189,7 @@ public abstract class Mission {
         this.failureReason = failureReason;
     }
 
+    // Sets colony.
     public void setColony(Colony colony){
         if(colony == null){
             throw new IllegalArgumentException("Invalid colony");
@@ -179,20 +197,24 @@ public abstract class Mission {
         this.colony = colony;
     }
 
+    // Checks whether associated with another colony.
     public boolean isAssociatedWithAnotherColony(Colony candidate){
         return this.colony != null && this.colony != candidate;
     }
 
+    // Checks whether assigning agent.
     public boolean isAssigningAgent(Agent agent){
         return this.assigningAgent == agent;
     }
 
+    // Notifies colony if terminal.
     private void notifyColonyIfTerminal(){
         if (this.colony != null) {
             this.colony.clearActiveMissionIfTerminal(this);
         }
     }
 
+    // Handles mission.
     public void failMission(String reason){
         if(reason == null || reason.isBlank()){
             throw new IllegalArgumentException("Invalid failure reason");
@@ -211,6 +233,7 @@ public abstract class Mission {
         this.agents.clear();
         notifyColonyIfTerminal();
     }
+// Rejects mission.
 public void rejectMission(String reason) {
     if (reason == null || reason.isBlank()) {
         throw new IllegalArgumentException("Invalid rejection reason");
@@ -235,6 +258,7 @@ public void rejectMission(String reason) {
 
 // Assign an agent
 
+// Handles assign.
 public void assign(Agent agent) {
     if (agent == null) {
         throw new IllegalArgumentException("Invalid agent");
@@ -289,6 +313,7 @@ public void assign(Agent agent) {
 
 
 
+    // Handles unassign.
     public void unassign(Agent agent){
         if(agent == null || !this.agents.contains(agent)){
             throw new IllegalArgumentException("Invalid agent");
@@ -311,6 +336,7 @@ public void assign(Agent agent) {
 
     // Check required resources against available resources
 
+    // Checks resources.
     public boolean checkresources(
             Map<Resources, Double> availableResources) {
 
@@ -336,10 +362,12 @@ public void assign(Agent agent) {
 
     // After the end of the mission we must free the Agent
 
+    // Handles successful completion.
     protected void onSuccessfulCompletion() {
         // Mission subclasses may apply their successful outcome here.
     }
 
+    // Finishes mission.
     public void finishMission(boolean successful){
         if(this.state != Mission_Emergency_States.INPROGRESS){
             throw new IllegalStateException("Mission is not in progress");
@@ -361,6 +389,7 @@ public void assign(Agent agent) {
 
 
     // Change the status of the mission
+    // Starts mission.
     public void startMission() {
 
     if(colony == null || colony.getActiveMission() != this){
@@ -386,6 +415,7 @@ public void assign(Agent agent) {
     this.state = Mission_Emergency_States.INPROGRESS;
 }
 
+    // Advances time unit.
     public void advanceTimeUnit() {
         if (this.state != Mission_Emergency_States.INPROGRESS) {
             return;

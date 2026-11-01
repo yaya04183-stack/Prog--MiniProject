@@ -11,6 +11,8 @@ public class PowerStation extends Facilities
 {
     private final double outputPerTimeUnit;
 
+    // Initializes a PowerStation instance.
+    // Initializes a PowerStation instance.
     public PowerStation(String location, double capacity, OperationalStatus status,
                         Map<Resources, Double> resources, List<Equipment> equipment,
                         List<Agent> occupants, double outputPerTimeUnit)
@@ -22,6 +24,7 @@ public class PowerStation extends Facilities
     }
 
     // The simulation calls this every time unit
+    // Generates power.
     public void generatePower()
     {
         if (getOperationalStatus().isOperational())

@@ -983,22 +983,18 @@ final class AdminDashboard extends JFrame {
         JSpinner battery = new JSpinner(new SpinnerNumberModel(100.0, 0.0, 100.0, 1.0));
         JComboBox<String> health = stringChoices(robotHealthStatuses(), "Operational");
         JComboBox<String> location = stringChoices(existingLocations(), "Habitat-01");
-        EnumSelectionPanel<Capability> capabilities = new EnumSelectionPanel<>(Capability.class);
-        capabilities.setSelection(EnumSet.of(Capability.SURFACE_TRAVEL,
-                Capability.EQUIPMENT_CARRYING, Capability.EXPLORATION));
-        JLabel capabilityHint = new JLabel("Choose capabilities for the rover.");
+        JLabel capabilityHint = new JLabel("Exploration rover abilities are fixed.");
         capabilityHint.setForeground(MUTED);
         type.addActionListener(event -> {
             String selectedType = String.valueOf(type.getSelectedItem());
-            boolean customCapabilities = "Exploration rover".equals(selectedType);
-            capabilities.setEnabled(customCapabilities);
-            capabilityHint.setText(customCapabilities
-                    ? "Choose what this rover can do."
-                    : "This robot has preset abilities: " + humanize(fixedRobotCapabilities(selectedType).toString()));
+            capabilityHint.setText("Exploration rover".equals(selectedType)
+                    ? "Fixed abilities: Surface Travel, Equipment Carrying, Exploration."
+                    : "This robot has preset abilities: "
+                            + humanize(fixedRobotCapabilities(selectedType).toString()));
         });
         JPanel form = form("Robot type", type, "Battery level (0–100)", battery,
                 "Health", health, "Current base", location,
-                "Abilities", capabilities, "", capabilityHint);
+                "Abilities", capabilityHint);
         if (JOptionPane.showConfirmDialog(this, boundedFormContent(form, 620, 440), "Add a robot",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) != JOptionPane.OK_OPTION) {
             return;
@@ -1011,7 +1007,7 @@ final class AdminDashboard extends JFrame {
                 robot = new ExplorationRover(batteryLevel,
                         String.valueOf(health.getSelectedItem()),
                         String.valueOf(location.getSelectedItem()),
-                        true, capabilities.selectedValues());
+                        true);
             } else if ("Repair robot".equals(selectedType)) {
                 robot = new RepairRobot(batteryLevel,
                         String.valueOf(health.getSelectedItem()),

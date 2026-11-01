@@ -19,44 +19,35 @@ public class MissionAssignmentTest {
         private Mission mission;
         private final boolean shouldFail;
 
+        // Initializes a TestAgent instance.
         TestAgent(boolean shouldFail) {
             this.shouldFail = shouldFail;
         }
 
+        // Checks whether it can perform.
         @Override
         public boolean canPerform(Mission mission) {
             return mission != null && available;
         }
 
-        @Override
-        public boolean isAvailable() {
-            return available;
-        }
 
+        // Makes available.
         @Override
         public void makeAvailable() {
             available = true;
             mission = null;
         }
 
-        @Override
-        public void setAvailability(boolean availability) {
-            this.available = availability;
-        }
 
-        @Override
-        public String getCurrentLocation() {
-            return "Test Location";
-        }
 
-        @Override
-        public void setCurrentLocation(String location) {}
 
+        // Checks whether it can handle emergency.
         @Override
         public boolean canHandleEmergency(EmergencyType type) {
             return false;
         }
 
+        // Assigns mission.
         @Override
         public void assignMission(Mission mission) {
             if (shouldFail) {
@@ -66,12 +57,38 @@ public class MissionAssignmentTest {
             this.mission = mission;
             this.available = false;
         }
+    
+        // Getters
+
+        // Checks whether available.
+        @Override
+        public boolean isAvailable() {
+            return available;
+        }
+        // Returns current location.
+        @Override
+        public String getCurrentLocation() {
+            return "Test Location";
+        }
+
+        // Setters
+
+        // Sets availability.
+        @Override
+        public void setAvailability(boolean availability) {
+            this.available = availability;
+        }
+        // Sets current location.
+        @Override
+        public void setCurrentLocation(String location) {}
     }
 
+    // Creates mission.
     private static Mission createMission() {
         return new Mission(5, null, Map.of(), Set.of()) {};
     }
 
+    // Handles test rollback.
     private static boolean testRollback() {
 
         Colony colony = new Colony();
@@ -92,6 +109,7 @@ public class MissionAssignmentTest {
                 && colony.getActiveMission() == null;
     }
 
+    // Handles test successful lifecycle.
     private static boolean testSuccessfulLifecycle() {
 
         Colony colony = new Colony();
@@ -120,6 +138,7 @@ public class MissionAssignmentTest {
                 && colony.getActiveMission() == null;
     }
 
+    // Handles test failed lifecycle.
     private static boolean testFailedLifecycle() {
 
         Colony colony = new Colony();
@@ -142,6 +161,7 @@ public class MissionAssignmentTest {
                 && colony.getActiveMission() == null;
     }
 
+    // Handles test fail active mission.
     private static boolean testFailActiveMission() {
 
         Colony colony = new Colony();
@@ -165,6 +185,9 @@ public class MissionAssignmentTest {
                 && colony.getActiveMission() == null;
     }
 
+    // Runs the program entry point.
+    // Runs the program entry point.
+    // Runs the program entry point.
     public static void main(String[] args) {
 
         System.out.println("Rollback Test: "

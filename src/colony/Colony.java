@@ -36,6 +36,8 @@ public class Colony {
     private final Set<Mission> resourcesPreparedMissions =
             Collections.newSetFromMap(new IdentityHashMap<>());
 
+    // Initializes a Colony instance.
+    // Initializes a Colony instance.
     public Colony() 
     {
         personnel = new ArrayList<>();
@@ -47,6 +49,7 @@ public class Colony {
         activeMission = null;
     }
 
+    // Adds personnel.
     public void addPersonnel(Personnel person)
     {
         if(person==null){
@@ -55,6 +58,7 @@ public class Colony {
         else {this.personnel.add(person);}
     }
 
+    // Adds facility.
     public void addFacility(Facilities facility)
     {
         if(facility==null)
@@ -69,6 +73,7 @@ public class Colony {
         }
     }
 
+    // Adds robot.
     public void addRobot(RoboticUnit robot){
         if(robot == null) {
             throw new IllegalArgumentException("Robot cannot be null or empty");
@@ -80,6 +85,7 @@ public class Colony {
     }
 
 
+    // Submits mission.
     public boolean submitMission(Mission mission,List<Agent> agents){
         if(mission == null){
             return false;
@@ -186,6 +192,7 @@ public class Colony {
         return true;
     } 
     
+    // Finishes active mission.
     public boolean finishActiveMission(boolean successful){
         if(this.activeMission == null){
             return false;
@@ -198,6 +205,7 @@ public class Colony {
     }
 
 
+    // Starts active mission.
     public boolean startActiveMission(){
         if(this.activeMission == null){
             return false;
@@ -207,6 +215,7 @@ public class Colony {
         return mission.getState() == Mission_Emergency_States.INPROGRESS;
     }
 
+    // Advances time unit.
     public void advanceTimeUnit() {
         if (this.activeMission == null) {
             return;
@@ -222,6 +231,7 @@ public class Colony {
         this.activeMission.advanceTimeUnit();
     }
 
+    // Prepares mission start.
     /** Prepares mission resources atomically, once per mission. */
     public boolean prepareMissionStart(Mission mission) {
         if (mission == null || this.activeMission != mission
@@ -284,28 +294,15 @@ public class Colony {
         return true;
     }
 
+    // Restores resources.
     private void restoreResources(Map<Facilities, Map<Resources, Double>> originalResources) {
         for (Map.Entry<Facilities, Map<Resources, Double>> entry : originalResources.entrySet()) {
             entry.getKey().setResources(entry.getValue());
         }
     }
 
-    public Map<Resources, Double> getColonyResourceTotal()
-    {
-        Map<Resources,Double> totals = new HashMap<>();
-        
-        for(Facilities facility : facilities)
-        {
-            if(facility == null || facility.getOperationalStatus() != OperationalStatus.OPERATIONAL)
-                continue;
-            for(Map.Entry<Resources,Double> entry : facility.getResources().entrySet())
-            {
-                totals.merge(entry.getKey(),entry.getValue(),Double::sum);
-            }    
-        }
-        return totals;
-    }
 
+    // Handles active mission.
     public boolean failActiveMission(String reason) {
     if (this.activeMission == null) {
         return false;
@@ -317,6 +314,7 @@ public class Colony {
     return true;
     }
 
+    // Clears active mission if terminal.
     public void clearActiveMissionIfTerminal(Mission mission) {
         if (mission == null || this.activeMission != mission) {
             return;
@@ -330,13 +328,8 @@ public class Colony {
         }
     }
 
-    public void setMarsEnvironment(MarsEnvironment marsEnvironment) {
-        if (marsEnvironment == null) {
-            throw new IllegalArgumentException("Mars environment cannot be null");
-        }
-        this.marsEnvironment = marsEnvironment;
-    }
 
+// Returns available responders.
 private List<Agent> getAvailableResponders(Emergency emergency)
 {     
     List<Agent> responders = new ArrayList<>();
@@ -355,6 +348,7 @@ private List<Agent> getAvailableResponders(Emergency emergency)
     return responders;
 }
 
+// Handles emergency.
 public boolean handleEmergency(Emergency emergency)
 {
     if(emergency==null)
@@ -409,6 +403,7 @@ public boolean handleEmergency(Emergency emergency)
     }
 }
 
+// Checks whether it has operational facility at.
 private boolean hasOperationalFacilityAt(Emergency emergency) {
     Object location = emergency.getLocation();
     if (location instanceof Facilities target) {
@@ -421,6 +416,7 @@ private boolean hasOperationalFacilityAt(Emergency emergency) {
             && facility.getLocation().equals(targetLocation));
 }
 
+// Consumes emergency resources.
 private boolean consumeEmergencyResources(Map<Resources, Double> requiredResources) {
     Map<Resources, Double> remaining = new LinkedHashMap<>(requiredResources);
     Map<Facilities, Map<Resources, Double>> deductionPlan = new LinkedHashMap<>();
@@ -473,23 +469,58 @@ private boolean consumeEmergencyResources(Map<Resources, Double> requiredResourc
     return true;
 }
 
+
+    // Getters
+
+    // Returns colony resource total.
+    public Map<Resources, Double> getColonyResourceTotal()
+    {
+        Map<Resources,Double> totals = new HashMap<>();
+        
+        for(Facilities facility : facilities)
+        {
+            if(facility == null || facility.getOperationalStatus() != OperationalStatus.OPERATIONAL)
+                continue;
+            for(Map.Entry<Resources,Double> entry : facility.getResources().entrySet())
+            {
+                totals.merge(entry.getKey(),entry.getValue(),Double::sum);
+            }    
+        }
+        return totals;
+    }
+// Returns emergencies.
 public List<Emergency> getEmergencies(){
     return  new ArrayList<>(this.emergencies);
 }
-
+// Returns personnel.
 public List<Personnel> getPersonnel() {
     return new ArrayList<>(this.personnel);
 }
+// Returns facilities.
 public List<Facilities> getFacilities() {
     return new ArrayList<>(this.facilities);
 }
+// Returns robotic units.
 public List<RoboticUnit> getRoboticUnits() {
     return new ArrayList<>(this.roboticUnits);
 }
+// Returns missions.
 public List<Mission> getMissions() {
     return new ArrayList<>(this.missions);
 }
+// Returns active mission.
 public Mission getActiveMission() {
     return this.activeMission;
 }
+
+    // Setters
+
+    // Sets mars environment.
+    public void setMarsEnvironment(MarsEnvironment marsEnvironment) {
+        if (marsEnvironment == null) {
+            throw new IllegalArgumentException("Mars environment cannot be null");
+        }
+        this.marsEnvironment = marsEnvironment;
+    }
+
 }

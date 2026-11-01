@@ -22,6 +22,8 @@ public class Research extends Mission
 {
     private String topic;
     private boolean experimentCompleted;
+    // Initializes a Research instance.
+    // Initializes a Research instance.
     public Research(int needtimeunits,Facilities facility,Map<Resources,Double> requiredResources,Set<Capability> requiredCapabilities,String topic)
     {
         super(needtimeunits,facility,requiredResources,requiredCapabilities);
@@ -35,8 +37,15 @@ public class Research extends Mission
             );
         }
     }
+    // Getters
+
+    // Returns topic.
     public String getTopic(){return this.topic;}
+    // Checks whether experiment completed.
     public boolean isExperimentCompleted() { return experimentCompleted; }
+    // Setters
+
+    // Sets topic.
     public void setTopic(String topic)
     {
         if(topic==null || topic.isBlank())
@@ -44,6 +53,7 @@ public class Research extends Mission
         else this.topic = topic;
     }
 
+    // Checks whether it has valid team composition.
     @Override
     public boolean hasValidTeamComposition(List<Agent> candidateAgents) {
         return candidateAgents != null
@@ -52,6 +62,7 @@ public class Research extends Mission
                 && hasOperationalLaboratoryEquipment();
     }
 
+    // Checks whether it has operational laboratory equipment.
     private boolean hasOperationalLaboratoryEquipment() {
         if (!(getFacility() instanceof Laboratory laboratory)
                 || laboratory.getOperationalStatus() != OperationalStatus.OPERATIONAL) {
@@ -63,6 +74,7 @@ public class Research extends Mission
                         && equipment.getCategory() == facilities.Equipment.Category.SCIENTIFIC);
     }
 
+    // Handles successful completion.
     @Override
     protected void onSuccessfulCompletion() {
         experimentCompleted = true;

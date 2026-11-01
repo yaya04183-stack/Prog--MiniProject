@@ -5,6 +5,8 @@ import java.util.EnumSet;
 
 public class RepairRobot extends RoboticUnit {
 
+// Initializes a RepairRobot instance.
+// Initializes a RepairRobot instance.
 public RepairRobot(
     double batteryLevel,
     String healthStatus,

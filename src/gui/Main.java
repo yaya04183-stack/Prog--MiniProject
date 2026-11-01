@@ -112,10 +112,7 @@ public final class Main {
         Equipment roverKit = new Equipment(
                 "Survey Kit", OperationalStatus.OPERATIONAL);
         ExplorationRover rover = new ExplorationRover(
-                92.0, "Operational", "Habitat-01", true,
-                EnumSet.of(Capability.SURFACE_TRAVEL,
-                        Capability.EQUIPMENT_CARRYING,
-                        Capability.EXPLORATION));
+                92.0, "Operational", "Habitat-01", true);
         rover.setEquipment(List.of(roverKit));
 
         RepairRobot repairRobot = new RepairRobot(

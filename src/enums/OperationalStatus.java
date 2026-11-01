@@ -8,6 +8,9 @@ public enum OperationalStatus
     DESTROYED;
 
     // Used by the colony when summing colony-wide resource totals
+    // Getters
+
+    // Checks whether operational.
     public boolean isOperational()
     {
         return this == OPERATIONAL;

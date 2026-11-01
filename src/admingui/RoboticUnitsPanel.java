@@ -114,13 +114,14 @@ final class RoboticUnitsPanel extends JPanel implements Refreshable {
         java.util.Map<Capability, JCheckBox> capabilityBoxes = new java.util.EnumMap<>(Capability.class);
         for (Capability capability : Capability.values()) {
             JCheckBox box = new JCheckBox(capability.name());
+            box.setSelected(capability == Capability.SURFACE_TRAVEL
+                    || capability == Capability.EQUIPMENT_CARRYING
+                    || capability == Capability.EXPLORATION);
+            box.setEnabled(false);
             capabilityBoxes.put(capability, box);
             capabilitiesPanel.add(box);
         }
-        capabilityBoxes.get(Capability.SURFACE_TRAVEL).setSelected(true);
-        capabilityBoxes.get(Capability.EQUIPMENT_CARRYING).setSelected(true);
-        capabilityBoxes.get(Capability.EXPLORATION).setSelected(true);
-        JLabel capabilitiesLabel = new JLabel("Capabilities (ExplorationRover only):");
+        JLabel capabilitiesLabel = new JLabel("Fixed exploration rover capabilities:");
 
         JPanel form = new JPanel(new GridLayout(0, 2, 6, 6));
         form.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -171,13 +172,8 @@ final class RoboticUnitsPanel extends JPanel implements Refreshable {
                     case "Drone" -> unit = new Drone(battery, health, location, available);
                     case "RepairRobot" -> unit = new RepairRobot(battery, health, location, available);
                     default -> {
-                        Set<Capability> selected = EnumSet.noneOf(Capability.class);
-                        for (var entry : capabilityBoxes.entrySet()) {
-                            if (entry.getValue().isSelected()) {
-                                selected.add(entry.getKey());
-                            }
-                        }
-                        ExplorationRover rover = new ExplorationRover(battery, health, location, available, selected);
+                        ExplorationRover rover = new ExplorationRover(
+                                battery, health, location, available);
                         if (addSurveyKit.isSelected()) {
                             rover.setEquipment(List.of(new Equipment("Survey Kit", OperationalStatus.OPERATIONAL)));
                         }

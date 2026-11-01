@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class StorageFacility extends Facilities
 {
+    // Initializes a StorageFacility instance.
+    // Initializes a StorageFacility instance.
     public StorageFacility(String location, double capacity, OperationalStatus status,
                            Map<Resources, Double> resources, List<Equipment> equipment,
                            List<Agent> occupants)
@@ -16,6 +18,9 @@ public class StorageFacility extends Facilities
         super(FacilityType.STORAGE, location, capacity, status, resources, equipment, occupants);
     }
 
+    // Getters
+
+    // Returns total stored.
     public double getTotalStored()
     {
         double total = 0;
@@ -24,7 +29,7 @@ public class StorageFacility extends Facilities
         return total;
     }
 
-    // Returns false if full or not operational
+    // Handles store.
     public boolean store(Resources r, double amount)
     {
         if (!getOperationalStatus().isOperational()) return false;

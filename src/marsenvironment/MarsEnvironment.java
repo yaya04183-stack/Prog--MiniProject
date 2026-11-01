@@ -13,34 +13,16 @@ public class MarsEnvironment {
 
     private EnviromentStates environmentState;
 
+    // Initializes a MarsEnvironment instance.
+    // Initializes a MarsEnvironment instance.
     public MarsEnvironment(EnviromentStates environmentState){
         SetEnvironmentState(environmentState);
     }
 
-    public EnviromentStates GetEnvironmentState() {
-        return environmentState;
-    }
 
-    public void SetEnvironmentState(EnviromentStates environmentState) {
-        if (environmentState == null) {
-            throw new IllegalArgumentException("Environment state cannot be null");
-        }
-        this.environmentState = environmentState;
-    }
 
-    public int GetEnvironmentStateCode() {
-        switch (environmentState) {
-            case DUST_STORM:
-                return 1;
-            case COMMUNICATION_DISTRIBUTION:
-                return 2;
-            case NORMAL_CONDITION:
-                return 3;
-            default:
-                throw new IllegalArgumentException("Unknown environment state: " + environmentState);
-        }
-    }
 
+    // Returns mission restriction reason.
     public String getMissionRestrictionReason(Mission mission, List<Agent> agents) {
         if (mission == null || agents == null) {
             return null;
@@ -75,6 +57,7 @@ public class MarsEnvironment {
         return null;
     }
 
+    // Returns active mission failure reason.
     public String getActiveMissionFailureReason(Mission mission) {
         if (mission == null) {
             return null;
@@ -96,6 +79,7 @@ public class MarsEnvironment {
         return null;
     }
 
+    // Checks whether it has capability.
     private boolean hasCapability(List<Agent> agents, Capability capability) {
         for (Agent agent : agents) {
             if (agent != null && agent.hasCapability(capability)) {
@@ -105,6 +89,7 @@ public class MarsEnvironment {
         return false;
     }
 
+    // Checks whether it has skill.
     private boolean hasSkill(List<Agent> agents, Skills skill) {
         for (Agent agent : agents) {
             if (agent != null && agent.hasSkill(skill)) {
@@ -114,5 +99,35 @@ public class MarsEnvironment {
         return false;
     }
 
+
+    // Getters
+
+    // Handles get environment state.
+    public EnviromentStates GetEnvironmentState() {
+        return environmentState;
+    }
+    // Handles get environment state code.
+    public int GetEnvironmentStateCode() {
+        switch (environmentState) {
+            case DUST_STORM:
+                return 1;
+            case COMMUNICATION_DISTRIBUTION:
+                return 2;
+            case NORMAL_CONDITION:
+                return 3;
+            default:
+                throw new IllegalArgumentException("Unknown environment state: " + environmentState);
+        }
+    }
+
+    // Setters
+
+    // Handles set environment state.
+    public void SetEnvironmentState(EnviromentStates environmentState) {
+        if (environmentState == null) {
+            throw new IllegalArgumentException("Environment state cannot be null");
+        }
+        this.environmentState = environmentState;
+    }
 
 }

@@ -18,6 +18,8 @@ import enums.Skills;
 
 public class Rescue extends Mission
 {
+    // Initializes a Rescue instance.
+    // Initializes a Rescue instance.
     public Rescue(
                     int needtimesunits,
                     Facilities facility,
@@ -27,6 +29,7 @@ public class Rescue extends Mission
         super(needtimesunits,facility,requiredResources,requiredCapabilities);
     }
 
+    // Checks whether it has valid team composition.
     @Override
     public boolean hasValidTeamComposition(List<Agent> candidateAgents) {
         if (candidateAgents == null) {

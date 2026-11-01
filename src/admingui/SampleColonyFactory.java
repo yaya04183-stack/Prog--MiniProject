@@ -74,8 +74,8 @@ final class SampleColonyFactory {
         colony.addPersonnel(ahmed);
         colony.addPersonnel(nourhan);
 
-        ExplorationRover rover = new ExplorationRover(100.0, "Operational", "Habitat-Alpha", true,
-                EnumSet.of(Capability.SURFACE_TRAVEL, Capability.EQUIPMENT_CARRYING, Capability.EXPLORATION));
+        ExplorationRover rover = new ExplorationRover(
+                100.0, "Operational", "Habitat-Alpha", true);
         rover.setEquipment(List.of(new Equipment("Survey Kit", OperationalStatus.OPERATIONAL)));
         RepairRobot repairRobot = new RepairRobot(100.0, "Operational", "Habitat-Alpha", true);
         Drone drone = new Drone(100.0, "Operational", "Habitat-Alpha", true);

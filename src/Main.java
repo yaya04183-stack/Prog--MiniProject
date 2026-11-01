@@ -26,6 +26,9 @@ import simulation.Simulation;
 /** Runs the five demonstration scenarios required by the project PDF. */
 public class Main {
 
+    // Runs the program entry point.
+    // Runs the program entry point.
+    // Runs the program entry point.
     public static void main(String[] args) {
         demonstrateSuccessfulExploration();
         demonstrateMissionRejection();
@@ -34,6 +37,7 @@ public class Main {
         demonstrateDustStormEffect();
     }
 
+    // Demonstrates successful exploration.
     private static void demonstrateSuccessfulExploration() {
         printHeading("Scenario 1: Successful exploration");
         Simulation.resettime();
@@ -58,6 +62,7 @@ public class Main {
         Simulation.showtime();
     }
 
+    // Demonstrates mission rejection.
     private static void demonstrateMissionRejection() {
         printHeading("Scenario 2: Mission rejected for an unsuitable agent");
 
@@ -78,6 +83,7 @@ public class Main {
                 + unsuitableAgent.isAvailable());
     }
 
+    // Demonstrates resource shortage.
     private static void demonstrateResourceShortage() {
         printHeading("Scenario 3: Mission rejected because resources are insufficient");
 
@@ -96,6 +102,7 @@ public class Main {
                 + habitat.getResourceAmount(Resources.OXYGEN));
     }
 
+    // Demonstrates oxygen leak response.
     private static void demonstrateOxygenLeakResponse() {
         printHeading("Scenario 4: Oxygen leak emergency response");
 
@@ -127,6 +134,7 @@ public class Main {
                 + engineer.isAvailable() + ", " + repairRobot.isAvailable());
     }
 
+    // Demonstrates dust storm effect.
     private static void demonstrateDustStormEffect() {
         printHeading("Scenario 5: Dust storm affects exploration");
 
@@ -143,6 +151,7 @@ public class Main {
         System.out.println("Environment: " + EnviromentStates.DUST_STORM);
     }
 
+    // Creates habitat.
     private static Habitat createHabitat(
             String location, double oxygen, double spareParts) {
         return new Habitat(
@@ -154,6 +163,7 @@ public class Main {
                 List.of());
     }
 
+    // Adds exploration team.
     private static List<Agent> addExplorationTeam(
             Colony colony, String location, int firstId) {
         Scientist scientist = new Scientist(
@@ -163,11 +173,7 @@ public class Main {
                 100.0,
                 "Operational",
                 location,
-                true,
-                EnumSet.of(
-                        Capability.SURFACE_TRAVEL,
-                        Capability.EQUIPMENT_CARRYING,
-                        Capability.EXPLORATION));
+                true);
         rover.setEquipment(List.of(
                 new Equipment("Survey Kit", OperationalStatus.OPERATIONAL)));
 
@@ -176,6 +182,7 @@ public class Main {
         return List.of(scientist, rover);
     }
 
+    // Creates exploration mission.
     private static Exploration createExplorationMission(
             Habitat habitat, double requiredOxygen) {
         Set<Capability> roverCapabilities = EnumSet.of(
@@ -190,6 +197,7 @@ public class Main {
                 "North Ridge");
     }
 
+    // Prints mission snapshot.
     private static void printMissionSnapshot(
             String label, Mission mission, Colony colony, List<Agent> team) {
         System.out.println(label + ":");
@@ -204,6 +212,7 @@ public class Main {
         }
     }
 
+    // Prints mission outcome.
     private static void printMissionOutcome(
             Mission mission, Colony colony, boolean accepted) {
         System.out.println("Submission accepted: " + accepted);
@@ -215,6 +224,7 @@ public class Main {
         }
     }
 
+    // Prints heading.
     private static void printHeading(String heading) {
         System.out.println();
         System.out.println("=== " + heading + " ===");

@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class CommunicationStation extends Facilities
 {
+    // Initializes a CommunicationStation instance.
+    // Initializes a CommunicationStation instance.
     public CommunicationStation(String location, double capacity, OperationalStatus status,
                                 Map<Resources, Double> resources, List<Equipment> equipment,
                                 List<Agent> occupants)
@@ -17,6 +19,9 @@ public class CommunicationStation extends Facilities
     }
 
     // Rescue missions and drones will ask this
+    // Getters
+
+    // Checks whether communication available.
     public boolean isCommunicationAvailable()
     {
         return getOperationalStatus().isOperational();

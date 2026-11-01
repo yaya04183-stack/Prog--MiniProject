@@ -21,6 +21,8 @@ public class Repair extends Mission
 {
     private Object repairObject;
 
+    // Initializes a Repair instance.
+    // Initializes a Repair instance.
     public Repair(int needtimesunits,Facilities facility,Map<Resources,Double> requiredResources,Set<Capability> requiredCapabilities,Object repairObject)
     {
         super(needtimesunits,facility,requiredResources,requiredCapabilities);
@@ -40,6 +42,41 @@ public class Repair extends Mission
         }
         this.repairObject = repairObject;
         }
+    
+
+    // Performs repair.
+    public void performRepair()
+    {
+        if(repairObject instanceof Facilities)
+            ((Facilities) repairObject).setOperationalStatus(OperationalStatus.OPERATIONAL);
+        else if(repairObject instanceof Equipment)
+            ((Equipment) repairObject).setOperationalStatus(OperationalStatus.OPERATIONAL);
+    }
+
+    // Handles successful completion.
+    @Override
+    protected void onSuccessfulCompletion() {
+        performRepair();
+    }
+
+    // Checks whether it has valid team composition.
+    @Override
+    public boolean hasValidTeamComposition(List<Agent> candidateAgents) {
+        return candidateAgents != null
+                && candidateAgents.stream().anyMatch(agent -> agent != null
+                        && agent.hasSkill(Skills.MECHANICAL))
+                && candidateAgents.stream().anyMatch(agent -> agent != null
+                        && agent.hasCapability(Capability.EQUIPMENT_REPAIR));
+    }
+
+    // Getters
+
+    // Returns object.
+    public Object getObject(){return repairObject;}
+
+    // Setters
+
+    // Sets object.
     public void setObject(Object repairObject)
         {
         if(!(repairObject instanceof Equipment) && !(repairObject instanceof Facilities))
@@ -76,29 +113,5 @@ public class Repair extends Mission
         
         this.repairObject = repairObject;
     }    
-    public Object getObject(){return repairObject;}
-
-    public void performRepair()
-    {
-        if(repairObject instanceof Facilities)
-            ((Facilities) repairObject).setOperationalStatus(OperationalStatus.OPERATIONAL);
-        else if(repairObject instanceof Equipment)
-            ((Equipment) repairObject).setOperationalStatus(OperationalStatus.OPERATIONAL);
-    }
-
-    @Override
-    protected void onSuccessfulCompletion() {
-        performRepair();
-    }
-
-    @Override
-    public boolean hasValidTeamComposition(List<Agent> candidateAgents) {
-        return candidateAgents != null
-                && candidateAgents.stream().anyMatch(agent -> agent != null
-                        && agent.hasSkill(Skills.MECHANICAL))
-                && candidateAgents.stream().anyMatch(agent -> agent != null
-                        && agent.hasCapability(Capability.EQUIPMENT_REPAIR));
-    }
-
 }
     

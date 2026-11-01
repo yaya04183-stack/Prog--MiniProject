@@ -51,6 +51,7 @@ import missions.Mission;
 import missions.Rescue;
 import personnel.Engineer;
 import personnel.Scientist;
+import roboticunit.Drone;
 import roboticunit.ExplorationRover;
 import roboticunit.RepairRobot;
 import simulation.Simulation;
@@ -714,16 +715,17 @@ final class ScenarioLabPanel extends JPanel {
         }));
 
         cases.add(new TestCase("Missing robot capability is rejected",
-                "Rover lacks EXPLORATION capability required by mission",
+                "A drone lacks the rover capabilities required by exploration",
                 "Rejected with FAILED mission", () -> {
             Fixture fixture = new Fixture(8.0);
             Scientist scientist = fixture.addScientist(true);
-            ExplorationRover rover = fixture.addRover(
-                    EnumSet.of(Capability.SURFACE_TRAVEL,
-                            Capability.EQUIPMENT_CARRYING));
+            Drone drone = new Drone(100.0, "Operational", "Habitat-Test", true);
+            drone.setEquipment(List.of(new Equipment(
+                    "Test equipment", OperationalStatus.OPERATIONAL)));
+            fixture.colony.addRobot(drone);
             Mission mission = fixture.explorationMission(1.0, 1);
             boolean accepted = fixture.colony.submitMission(
-                    mission, List.of(scientist, rover));
+                    mission, List.of(scientist, drone));
             String actual = "accepted=" + accepted + ", state=" + mission.getState()
                     + ", reason=" + mission.getFailureReason();
             return check(!accepted && mission.getState() == Mission_Emergency_States.FAILED,
@@ -766,7 +768,7 @@ final class ScenarioLabPanel extends JPanel {
                 "Capable rover submitted without communication-skilled personnel",
                 "Rejected because the team is incomplete", () -> {
             Fixture fixture = new Fixture(8.0);
-            ExplorationRover rover = fixture.addRover(EnumSet.of(Capability.SURFACE_TRAVEL));
+            ExplorationRover rover = fixture.addRover();
             Mission rescue = new Rescue(1, fixture.habitat, Map.of(), Set.of());
             boolean accepted = fixture.colony.submitMission(rescue, List.of(rover));
             String actual = "accepted=" + accepted + ", state=" + rescue.getState()
@@ -781,7 +783,7 @@ final class ScenarioLabPanel extends JPanel {
             Fixture fixture = new Fixture(8.0);
             Engineer engineer = fixture.addEngineer(
                     EnumSet.of(Skills.MECHANICAL, Skills.COMMUNICATION));
-            ExplorationRover rover = fixture.addRover(EnumSet.of(Capability.SURFACE_TRAVEL));
+            ExplorationRover rover = fixture.addRover();
             Mission rescue = new Rescue(1, fixture.habitat, Map.of(), Set.of());
             boolean accepted = fixture.colony.submitMission(rescue, List.of(engineer, rover));
             String actual = "accepted=" + accepted + ", state=" + rescue.getState()
@@ -988,9 +990,9 @@ final class ScenarioLabPanel extends JPanel {
             return engineer;
         }
 
-        private ExplorationRover addRover(Set<Capability> capabilities) {
+        private ExplorationRover addRover() {
             ExplorationRover rover = new ExplorationRover(
-                    100.0, "Operational", "Habitat-Test", true, capabilities);
+                    100.0, "Operational", "Habitat-Test", true);
             rover.setEquipment(List.of(new Equipment(
                     "Test Survey Kit", OperationalStatus.OPERATIONAL)));
             colony.addRobot(rover);
@@ -999,10 +1001,7 @@ final class ScenarioLabPanel extends JPanel {
 
         private List<Agent> addExplorationTeam() {
             Scientist scientist = addScientist(true);
-            ExplorationRover rover = addRover(EnumSet.of(
-                    Capability.SURFACE_TRAVEL,
-                    Capability.EQUIPMENT_CARRYING,
-                    Capability.EXPLORATION));
+            ExplorationRover rover = addRover();
             return List.of(scientist, rover);
         }
 

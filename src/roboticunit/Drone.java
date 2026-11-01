@@ -4,6 +4,8 @@ import java.util.EnumSet;
 
 public class Drone extends RoboticUnit{
 
+// Initializes a Drone instance.
+// Initializes a Drone instance.
 public Drone(
     double batteryLevel,
     String healthStatus,
